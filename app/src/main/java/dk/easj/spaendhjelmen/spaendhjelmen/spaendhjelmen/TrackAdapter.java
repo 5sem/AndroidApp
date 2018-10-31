@@ -2,6 +2,7 @@ package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,13 +48,21 @@ public class TrackAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.track_list_item, null);
         }
         Track track =trackList.get(position);
-        //ImageView imageView =(ImageView) convertView.findViewById(R.id.imageRegional);
+
+
+        ImageView imageView =(ImageView) convertView.findViewById(R.id.imageRegional);
         TextView txtColorcode = (TextView) convertView.findViewById(R.id.colorCode);
         TextView txtHeadline = (TextView) convertView.findViewById(R.id.txtHeadline);
         TextView txtInformation = (TextView) convertView.findViewById(R.id.txtInformation);
 
         txtColorcode.setBackgroundColor(Color.parseColor(track.colorCode));
-
+        if (track.regional.equals("Sjælland")){
+            imageView.setImageResource(R.drawable.sjaelland);
+        } else if(track.regional.equals("Fyn")) {
+            imageView.setImageResource(R.drawable.fyn);
+        }else if(track.regional.equals("Jylland")){
+            imageView.setImageResource(R.drawable.jylland);
+        }
 
         String header = track.Getregional() + " | " + track.Getcity() + " | " + track.Getname();
 
