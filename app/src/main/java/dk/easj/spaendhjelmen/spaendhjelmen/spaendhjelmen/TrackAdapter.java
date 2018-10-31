@@ -68,10 +68,10 @@ public class TrackAdapter extends BaseAdapter {
 
 
 
-        txtRegional.setText(track.regional);
-        txtCity.setText(track.city);
+        txtRegional.setText("Landsdel: " + track.regional);
+        txtCity.setText("By: "+track.city);
         txtHeadline.setText(track.name);
-        txtLenght.setText(Double.toString(track.length));
+        txtLenght.setText("Længde: " + Double.toString(track.length) + " Km");
         return convertView;
     }
 
