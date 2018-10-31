@@ -54,7 +54,9 @@ public class TrackAdapter extends BaseAdapter {
 
         txtColorcode.setBackgroundColor(Color.parseColor(track.colorCode));
 
+
         String header = track.Getregional() + " | " + track.Getcity() + " | " + track.Getname();
+
 
         txtHeadline.setText(header);
         txtInformation.setText(track.Getinfo());

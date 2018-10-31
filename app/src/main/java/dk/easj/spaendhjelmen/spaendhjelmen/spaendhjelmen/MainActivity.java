@@ -26,8 +26,9 @@ import dk.easj.spaendhjelmen.spaendhjelmen.R;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ListView mainListView;
     private ArrayAdapter<Track> adapter = null;
-    private final List<Track> trackList = new ArrayList<>();
+    private final ArrayList<Track> trackList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle("Searchbar here!");
+        mainListView = (ListView) findViewById(R.id.mainListView);
     }
 
     //inflater meny
@@ -58,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
     private class ReadTask extends ReadHttpTask {
         @Override
         protected void onPostExecute(CharSequence jsonString) {
-
             try {
 
                 JSONArray array = new JSONArray(jsonString.toString());
@@ -80,23 +81,10 @@ public class MainActivity extends AppCompatActivity {
                     String city = obj.getString("City");
 
                     Track track = new Track(id,pictureid,name,info,longitude, latitude,address,colorcode,length,maxheight,parkinfo,regional,postalcode,city);
-                    Log.d("test", "onPostExecute() returned:" + track);
+                    Log.d("TESTPÅ", "onPostExecute() returned:" + track);
                     trackList.add(track);
                 }
-
-                ListView listView = findViewById(R.id.mainListView);
-                adapter = new ArrayAdapter<Track>(getBaseContext(), android.R.layout.simple_list_item_1, trackList);
-                listView.setAdapter(adapter);
-//                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//                    @Override
-//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                        Intent intent = new Intent(getBaseContext(), SpecificObservation.class);
-//                        Observation observation = observationList.get((int) id);
-//                        intent.putExtra("Observation", observation);
-//                        startActivity(intent);
-//                    }
-//                });
+                mainListView.setAdapter(new TrackAdapter(MainActivity.this, trackList));
 
             } catch (JSONException ex) {
                 Log.e("MAINACTIVITY", ex.getMessage());
