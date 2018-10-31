@@ -53,7 +53,9 @@ public class TrackAdapter extends BaseAdapter {
         ImageView imageView =(ImageView) convertView.findViewById(R.id.imageRegional);
         TextView txtColorcode = (TextView) convertView.findViewById(R.id.colorCode);
         TextView txtHeadline = (TextView) convertView.findViewById(R.id.txtHeadline);
-        TextView txtInformation = (TextView) convertView.findViewById(R.id.txtInformation);
+        TextView txtLenght = (TextView) convertView.findViewById(R.id.txtLenght);
+        TextView txtCity = (TextView) convertView.findViewById(R.id.txtCity);
+        TextView txtRegional = (TextView) convertView.findViewById(R.id.txtRegional);
 
         txtColorcode.setBackgroundColor(Color.parseColor(track.colorCode));
         if (track.regional.equals("Sjælland")){
@@ -64,11 +66,12 @@ public class TrackAdapter extends BaseAdapter {
             imageView.setImageResource(R.drawable.jylland);
         }
 
-        String header = track.Getregional() + " | " + track.Getcity() + " | " + track.Getname();
 
 
-        txtHeadline.setText(header);
-        txtInformation.setText(track.Getinfo());
+        txtRegional.setText(track.regional);
+        txtCity.setText(track.city);
+        txtHeadline.setText(track.name);
+        txtLenght.setText(Double.toString(track.length));
         return convertView;
     }
 

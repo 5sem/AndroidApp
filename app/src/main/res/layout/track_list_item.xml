@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white">
+    android:orientation="vertical">
     <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="300px"
         android:orientation="horizontal"
-        android:layout_marginBottom="5dp">
+        android:layout_marginBottom="5dp"
+        android:background="@color/white">
 
         <android.support.v7.widget.AppCompatImageView
             android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
             android:textColor="@android:color/holo_red_light" />
         <android.support.v7.widget.LinearLayoutCompat
 
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
@@ -43,18 +43,40 @@
                     android:id="@+id/txtHeadline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="overskrift"
+                    android:text="overskrift "
                     android:textStyle="bold"/>
+
+
 
             </android.support.v7.widget.LinearLayoutCompat>
 
+            <TextView
+                android:id="@+id/txtLenght"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4km"
+                android:textStyle="bold"
+                android:gravity="right"/>
+            <TextView
+                android:id="@+id/txtCity"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="City"
+                />
+
+            <TextView
+                android:id="@+id/txtRegional"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="region"
+                />
 
             <TextView
                 android:id="@+id/txtInformation"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="beskrivelse"
-                />
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:drawableLeft="@drawable/ic_arrow_forward_black_24dp" />
 
 
         </android.support.v7.widget.LinearLayoutCompat>
