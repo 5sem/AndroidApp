@@ -25,9 +25,6 @@ import java.util.List;
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
 
 public class MainActivity extends AppCompatActivity {
-
-    private ListView mainListView;
-    private ArrayAdapter<Track> adapter = null;
     private final ArrayList<Track> trackList = new ArrayList<>();
 
     @Override
@@ -37,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle("Searchbar here!");
-        mainListView = (ListView) findViewById(R.id.mainListView);
     }
 
     //inflater meny
@@ -81,10 +77,21 @@ public class MainActivity extends AppCompatActivity {
                     String city = obj.getString("City");
 
                     Track track = new Track(id,pictureid,name,info,longitude, latitude,address,colorcode,length,maxheight,parkinfo,regional,postalcode,city);
-                    Log.d("TESTPÅ", "onPostExecute() returned:" + track);
                     trackList.add(track);
                 }
+                ListView mainListView = findViewById(R.id.mainListView);
+
                 mainListView.setAdapter(new TrackAdapter(MainActivity.this, trackList));
+                mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                        Intent intent = new Intent(getBaseContext(), SpecificTrack.class);
+                        Track track = trackList.get(position);
+                        intent.putExtra("Track", track);
+                        startActivity(intent);
+                    }
+                });
+
 
             } catch (JSONException ex) {
                 Log.e("MAINACTIVITY", ex.getMessage());

@@ -19,6 +19,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".spaendhjelmen.MainActivity"></activity>
+        <activity android:name=".spaendhjelmen.SpecificTrack"></activity>
     </application>
 
 </manifest>
