@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -28,12 +29,13 @@ import dk.easj.spaendhjelmen.spaendhjelmen.R;
 public class MainActivity extends AppCompatActivity {
     private final ArrayList<Track> trackList = new ArrayList<>();
     private final ArrayList<Track> searchTrackList = new ArrayList<>();
-
+    ProgressBar pgb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainpage);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbarmain);
+        pgb = (ProgressBar) findViewById(R.id.progressbar);
         setSupportActionBar(toolbar);
         setTitle("");
     }
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.d("START", "onStart: ");
-
+        trackList.clear();
         ReadTask task = new ReadTask();
         task.execute("https://spaendhjelmenrest.azurewebsites.net/service1.svc/tracks");
     }
@@ -68,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         ListView mainListView = findViewById(R.id.mainListView);
 
         mainListView.setAdapter(new TrackAdapter(MainActivity.this, searchTrackList));
+        pgb.setVisibility(View.GONE);
         mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -135,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(getBaseContext(), SpecificTrack.class);
                         Track track = trackList.get(position);
                         intent.putExtra("Track", track);
+
                         startActivity(intent);
                     }
                 });

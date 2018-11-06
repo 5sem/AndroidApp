@@ -25,7 +25,7 @@ private TextView specific_track_information, specific_track_parkinginformation;
 
         //appbar
         setTitle(track.name);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbartrack);
         setSupportActionBar(toolbar);
 
         specific_track_information = findViewById(R.id.specific_track_information);
