@@ -8,12 +8,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
 
 public class CommentAdapter extends BaseAdapter {
 
+    private static final DateFormat dateFormat = DateFormat.getDateInstance();
     ArrayList<UserComment> commentList;
     Context context;
 
@@ -41,7 +43,7 @@ public class CommentAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null){
             LayoutInflater inflater = LayoutInflater.from(context);
-            convertView = inflater.inflate(R.layout.track_list_item, null);
+            convertView = inflater.inflate(R.layout.comment_list_item, null);
         }
         UserComment comment =commentList.get(position);
 
@@ -52,11 +54,11 @@ public class CommentAdapter extends BaseAdapter {
         TextView txtedited = (TextView) convertView.findViewById(R.id.Comment_TxtViewEdited);
         TextView txtcreated = (TextView) convertView.findViewById(R.id.Comment_TxtViewCreated);
 
-        txtnavn.setText(comment.userId);
+        txtnavn.setText(Integer.toString(comment.userId));
         //TODO: husk at ændre userid til navn
         txtcomment.setText(comment.usercomment);
-        txtedited.setText(comment.edited.toString());
-        txtcreated.setText(comment.created.toString());
+        txtedited.setText(dateFormat.format(comment.edited.getTimeInMillis()));
+        txtcreated.setText(dateFormat.format(comment.created.getTimeInMillis()));
 
 
         return convertView;

@@ -62,36 +62,34 @@ public class MainActivity extends AppCompatActivity {
 
         String multiSearch = ((EditText) findViewById(R.id.multiSearchEditText)).getText().toString().toLowerCase();
 
+        //TODO: fix sortering, hopper stadig ind i hillerød ved søgning på rød
         for (Track t : trackList){
-            if (multiSearch.equals("rød")) {
+            if (multiSearch.equals("rød") || multiSearch.equals("grøn") || multiSearch.equals("sort") || multiSearch.equals("blå"))
+            {
+                if (multiSearch.equals("rød")) {
 
-                if (t.colorCode.contains("red"))
-                searchTrackList.add(t);
-                break;
+                    if (t.colorCode.contains("red"))
+                        searchTrackList.add(t);
+                }
+                if (multiSearch.equals("sort")) {
+
+                    if (t.colorCode.contains("black"))
+                        searchTrackList.add(t);
+                }
+                if (multiSearch.equals("grøn")) {
+
+                    if (t.colorCode.contains("green"))
+                        searchTrackList.add(t);
+                }
+                if (multiSearch.equals("blå")) {
+
+                    if (t.colorCode.contains("blue"))
+                        searchTrackList.add(t);
+
+                }
             }
-            if (multiSearch.equals("sort")) {
-
-                if (t.colorCode.contains("black"))
+               else if (t.city.toLowerCase().contains(multiSearch)){
                     searchTrackList.add(t);
-                break;
-            }
-            if (multiSearch.equals("grøn")) {
-
-                if (t.colorCode.contains("green"))
-                    searchTrackList.add(t);
-                break;
-            }
-            if (multiSearch.equals("blå")) {
-
-                if (t.colorCode.contains("blue"))
-                    searchTrackList.add(t);
-
-            }
-
-            else {
-                if (t.city.toLowerCase().contains(multiSearch)){
-                    searchTrackList.add(t);
-            }
             }
         }
         ListView mainListView = findViewById(R.id.mainListView);

@@ -29,6 +29,7 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,6 +40,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
 
@@ -101,7 +103,7 @@ private TextView specific_track_information, specific_track_parkinginformation;
                 // Perform Action on Button
 
                 String comment = msg.getText().toString();
-                int userid = 1; //admin ændre til logged in user
+                int userid = 1; //TODO: admin id, ændre til logged in user id
                 int trackid = track.getId();
 
                 try{
@@ -110,8 +112,9 @@ private TextView specific_track_information, specific_track_parkinginformation;
                     jsonObject.put("TrackId", trackid);
                     jsonObject.put("UserComment",comment);
                     String jsonDocument = jsonObject.toString();
-                    PostObservationTask task = new PostObservationTask();
+                    PostCommentTask task = new PostCommentTask();
                     task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments", jsonDocument);
+                    //TODO: skal blive under den specifike track efter man har oprettet sin kommentar
                 }
                 catch (JSONException ex){
                     Log.d("add",ex.toString());
@@ -147,7 +150,7 @@ private TextView specific_track_information, specific_track_parkinginformation;
         cancelBT.setText("Fortryd");
     }
 
-    private class PostObservationTask extends AsyncTask<String, Void, CharSequence> {
+    private class PostCommentTask extends AsyncTask<String, Void, CharSequence> {
 
         @Override
         protected CharSequence doInBackground(String... params) {
@@ -191,6 +194,7 @@ private TextView specific_track_information, specific_track_parkinginformation;
             Toast.makeText(SpecificTrack.this, "Kommentar Oprettet!", Toast.LENGTH_LONG).show();
             Log.d("POSTEXECUTE", charSequence.toString());
             finish();
+            startActivity(getIntent());
         }
 
         @Override
@@ -222,11 +226,10 @@ private TextView specific_track_information, specific_track_parkinginformation;
 
                     Calendar edited = JsonDateToDate(getStringEdited);
 
-                    UserComment usercommemt = new UserComment(id, trackid, userid,usercomment, created, edited);
-                    commentList.add(usercommemt);
+                    UserComment userComment = new UserComment(id, trackid, userid,usercomment, created, edited);
+                    commentList.add(userComment);
                 }
                 ListView mainCommentView = findViewById(R.id.specific_track_commentview);
-
                 mainCommentView.setAdapter(new CommentAdapter(SpecificTrack.this, commentList));
 
             } catch (JSONException ex) {
