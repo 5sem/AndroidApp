@@ -63,7 +63,27 @@ public class MainActivity extends AppCompatActivity {
         String multiSearch = ((EditText) findViewById(R.id.multiSearchEditText)).getText().toString().toLowerCase();
 
         for (Track t : trackList){
-            if (t.city.toLowerCase().contains(multiSearch)){
+            if (multiSearch.equals("rød")) {
+
+                if (t.colorCode.contains("red"))
+                searchTrackList.add(t);
+            }
+            if (multiSearch.equals("sort")) {
+
+                if (t.colorCode.contains("black"))
+                    searchTrackList.add(t);
+            }
+            if (multiSearch.equals("grøn")) {
+
+                if (t.colorCode.contains("green"))
+                    searchTrackList.add(t);
+            }
+            if (multiSearch.equals("blå")) {
+
+                if (t.colorCode.contains("blue"))
+                    searchTrackList.add(t);
+            }
+            else if (t.city.toLowerCase().contains(multiSearch)){
                 searchTrackList.add(t);
             }
         }
