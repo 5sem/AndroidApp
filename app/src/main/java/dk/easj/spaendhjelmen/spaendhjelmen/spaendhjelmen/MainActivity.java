@@ -67,24 +67,31 @@ public class MainActivity extends AppCompatActivity {
 
                 if (t.colorCode.contains("red"))
                 searchTrackList.add(t);
+                break;
             }
             if (multiSearch.equals("sort")) {
 
                 if (t.colorCode.contains("black"))
                     searchTrackList.add(t);
+                break;
             }
             if (multiSearch.equals("grøn")) {
 
                 if (t.colorCode.contains("green"))
                     searchTrackList.add(t);
+                break;
             }
             if (multiSearch.equals("blå")) {
 
                 if (t.colorCode.contains("blue"))
                     searchTrackList.add(t);
+
             }
-            else if (t.city.toLowerCase().contains(multiSearch)){
-                searchTrackList.add(t);
+
+            else {
+                if (t.city.toLowerCase().contains(multiSearch)){
+                    searchTrackList.add(t);
+            }
             }
         }
         ListView mainListView = findViewById(R.id.mainListView);

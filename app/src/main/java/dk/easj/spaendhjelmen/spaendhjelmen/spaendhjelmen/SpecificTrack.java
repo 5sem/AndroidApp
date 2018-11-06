@@ -16,14 +16,17 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,12 +37,14 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
 
 public class SpecificTrack extends AppCompatActivity {
 private Track track;
+private final ArrayList<UserComment> commentList = new ArrayList<>();
 private TextView specific_track_information, specific_track_parkinginformation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,4 +201,68 @@ private TextView specific_track_information, specific_track_parkinginformation;
             finish();
         }
     }
+
+    private class ReadTask extends ReadHttpTask {
+        @Override
+        protected void onPostExecute(CharSequence jsonString) {
+            try {
+
+                JSONArray array = new JSONArray(jsonString.toString());
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject obj = array.getJSONObject(i);
+                    int id = obj.getInt("Id");
+                    int trackid = obj.getInt("TrackId");
+                    int userid = obj.getInt("UserId");
+                    String usercomment = obj.getString("UserComment");
+
+                    String getStringCreated = obj.getString("Created");
+
+                    Calendar created = JsonDateToDate(getStringCreated);
+                    String getStringEdited = obj.getString("Edited");
+
+                    Calendar edited = JsonDateToDate(getStringEdited);
+
+                    UserComment usercommemt = new UserComment(id, trackid, userid,usercomment, created, edited);
+                    commentList.add(usercommemt);
+                }
+                ListView mainCommentView = findViewById(R.id.specific_track_commentview);
+
+                mainCommentView.setAdapter(new CommentAdapter(SpecificTrack.this, commentList));
+
+            } catch (JSONException ex) {
+                Log.e("MAINACTIVITY", ex.getMessage());
+            }
+
+        }
+
+        @Override
+        protected void onCancelled(CharSequence message) {
+            Toast.makeText(SpecificTrack.this, "Fejl:" + message.toString(), Toast.LENGTH_SHORT).show();
+            Log.e("MAINACTIVITY", message.toString());
+        }
+    }
+
+    //henter informationer fra rest service
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("START", "onStart: ");
+        commentList.clear();
+        ReadTask task = new ReadTask();
+        task.execute("https://spaendhjelmenrest.azurewebsites.net/service1.svc/comments/" + track.getId());
+        Log.d("on start", "onStart: " + track.getId());
+    }
+
+    //converterer jsonstring til tid
+    public static Calendar JsonDateToDate(String jsonDate) {
+        //  "/Date(1321867151710+0100)/"
+        int idx1 = jsonDate.indexOf("(");
+        int idx2 = jsonDate.indexOf(")") - 5;
+        String s = jsonDate.substring(idx1 + 1, idx2);
+        long timeInMilliSeconds = Long.valueOf(s);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timeInMilliSeconds);
+        return calendar;
+    }
+
 }
