@@ -11,7 +11,9 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -26,14 +28,16 @@ import dk.easj.spaendhjelmen.spaendhjelmen.R;
 
 public class MainActivity extends AppCompatActivity {
     private final ArrayList<Track> trackList = new ArrayList<>();
-
+    private final ArrayList<Track> searchTrackList = new ArrayList<>();
+    ProgressBar pgb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainpage);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbarmain);
+        pgb = (ProgressBar) findViewById(R.id.progressbar);
         setSupportActionBar(toolbar);
-        setTitle("Searchbar here!");
+        setTitle("");
     }
 
     //inflater meny
@@ -48,9 +52,55 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.d("START", "onStart: ");
-
+        trackList.clear();
         ReadTask task = new ReadTask();
         task.execute("https://spaendhjelmenrest.azurewebsites.net/service1.svc/tracks");
+    }
+
+    public void MainPageMultiSearchClicked(View view) {
+        searchTrackList.clear();
+
+        String multiSearch = ((EditText) findViewById(R.id.multiSearchEditText)).getText().toString().toLowerCase();
+
+        for (Track t : trackList){
+            if (t.city.toLowerCase().contains(multiSearch)){
+                searchTrackList.add(t);
+            }
+        }
+        ListView mainListView = findViewById(R.id.mainListView);
+
+        mainListView.setAdapter(new TrackAdapter(MainActivity.this, searchTrackList));
+        pgb.setVisibility(View.GONE);
+        mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Intent intent = new Intent(getBaseContext(), SpecificTrack.class);
+                Track track = searchTrackList.get(position);
+                intent.putExtra("Track", track);
+                startActivity(intent);
+
+            }
+        });
+
+    }
+
+    public void MainPageMultiSearchClearClicked(View view) {
+
+        EditText multisearch = findViewById(R.id.multiSearchEditText);
+        multisearch.setText("");
+        ListView mainListView = findViewById(R.id.mainListView);
+
+        mainListView.setAdapter(new TrackAdapter(MainActivity.this, trackList));
+        mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Intent intent = new Intent(getBaseContext(), SpecificTrack.class);
+                Track track = trackList.get(position);
+                intent.putExtra("Track", track);
+                startActivity(intent);
+
+            }
+        });
     }
 
     private class ReadTask extends ReadHttpTask {
@@ -88,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(getBaseContext(), SpecificTrack.class);
                         Track track = trackList.get(position);
                         intent.putExtra("Track", track);
+
                         startActivity(intent);
                     }
                 });
