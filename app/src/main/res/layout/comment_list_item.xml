@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -18,74 +19,83 @@
             android:layout_marginLeft="5dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/Commen_txtComment"
+            <ImageView
+                android:id="@+id/comment_ImageProflePic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Min fede kommentar" />
-
+                tools:srcCompat="@tools:sample/avatars" />
             <android.support.v7.widget.LinearLayoutCompat
+                android:layout_marginLeft="5dp"
                 android:layout_width="match_parent"
-                android:weightSum="2"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
+                <android.support.v7.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        android:id="@+id/Comment_txtViewNavn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mit Lange Navn"/>
+                    <ImageView
+                        android:layout_weight="2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <ImageButton
+                        android:layout_gravity="center"
+                        android:background="@drawable/ic_mode_edit_black_24dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </android.support.v7.widget.LinearLayoutCompat>
+
+                <TextView
+                    android:id="@+id/Comment_txtViewComment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fuck det var lige lækkert at cykle Fuck det var lige lækkert at cykle Fuck det var lige lækkert at cykle Fuck det var lige lækkert at cykle " />
+
 
                 <android.support.v7.widget.LinearLayoutCompat
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <android.support.v7.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:textStyle="bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Created "
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/Comment_txtPostTime"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="05-11-2018 18:30" />
-                    </android.support.v7.widget.LinearLayoutCompat>
-
-
-                    <android.support.v7.widget.LinearLayoutCompat
+                        android:text="Oprettet: " />
+                    <TextView
+                        android:id="@+id/Comment_TxtViewCreated"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:textStyle="bold"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Edited" />
-                        <TextView
-                            android:id="@+id/Comment_txtEdited"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="05-11-2018 18:39" />
-                    </android.support.v7.widget.LinearLayoutCompat>
-
-
+                        android:text="06-11-2018 kl 18:29"/>
                 </android.support.v7.widget.LinearLayoutCompat>
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="2" />
 
-                <ImageButton
-                    android:id="@+id/comment_btnMenu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/ic_mode_edit_black_24dp"
-                    android:layout_gravity="center"/>
+
+                <android.support.v7.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ændret: " />
+                    <TextView
+                        android:id="@+id/Comment_TxtViewEdited"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="06-11-2018 kl 18:30"/>
+                </android.support.v7.widget.LinearLayoutCompat>
+
             </android.support.v7.widget.LinearLayoutCompat>
+
+
+
 
 
         </android.support.v7.widget.LinearLayoutCompat>
