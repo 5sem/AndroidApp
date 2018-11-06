@@ -26,6 +26,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -229,8 +231,16 @@ private TextView specific_track_information, specific_track_parkinginformation;
                     UserComment userComment = new UserComment(id, trackid, userid,usercomment, created, edited);
                     commentList.add(userComment);
                 }
-                ListView mainCommentView = findViewById(R.id.specific_track_commentview);
-                mainCommentView.setAdapter(new CommentAdapter(SpecificTrack.this, commentList));
+                //ListView mainCommentView = findViewById(R.id.specific_track_commentview);
+                //mainCommentView.setAdapter(new CommentAdapter(SpecificTrack.this, commentList));
+
+                ExpandableHeightListView expandableListView = (ExpandableHeightListView) findViewById(R.id.specific_track_commentview);
+
+                expandableListView.setAdapter(new CommentAdapter(SpecificTrack.this, commentList));
+
+                // This actually does the magic
+                expandableListView.setExpanded(true);
+
 
             } catch (JSONException ex) {
                 Log.e("MAINACTIVITY", ex.getMessage());

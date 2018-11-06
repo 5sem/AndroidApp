@@ -71,14 +71,12 @@ android:layout_height="match_parent"
                 android:text="Kommentare:"
                 android:textStyle="bold" />
 
-            <ListView
+            <com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView
                 android:id="@+id/specific_track_commentview"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/hvidsmoke"
-                android:nestedScrollingEnabled="true">
-
-            </ListView>
+                android:padding="8dp">
+            </com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView>
 
         </LinearLayout>
 
