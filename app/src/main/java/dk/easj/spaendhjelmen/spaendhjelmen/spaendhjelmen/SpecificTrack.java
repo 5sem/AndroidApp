@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -22,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,6 +50,7 @@ import dk.easj.spaendhjelmen.spaendhjelmen.R;
 
 public class SpecificTrack extends AppCompatActivity {
 private Track track;
+private UserComment userComment;
 private final ArrayList<UserComment> commentList = new ArrayList<>();
 private TextView
         specific_track_information,
@@ -57,6 +60,7 @@ private TextView
         specific_track_region,
         specific_track_maxHeight,
         specific_track_difficulty;
+private final String TAG = "SpecificTrack";
 
 @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,6 +179,90 @@ private TextView
         cancelBT.setLayoutParams(negBtnLP);
         cancelBT.setText("Fortryd");
     }
+
+    public void menu_Comment_Delete_Clicked(MenuItem item) {
+        openDialogDelete();
+    }
+
+    public void openDialogDelete(){
+    AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+    TextView title = new TextView(this);
+    title.setText("Slet kommentar?");
+    title.setPadding(10, 10, 10, 10);
+    title.setGravity(Gravity.CENTER);
+    title.setTextColor(Color.BLACK);
+    title.setTextSize(20);
+    alertDialog.setCustomTitle(title);
+
+    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Slet", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+
+
+            DeleteTask task = new DeleteTask();
+            task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments/");
+            finish();
+            //TODO finde rigtigt id
+        }
+    });
+
+
+
+    alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Fortryd", new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+
+        }
+    });
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Properties for OK Button
+        final Button okBT = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        LinearLayout.LayoutParams neutralBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
+        neutralBtnLP.gravity = Gravity.FILL_HORIZONTAL;
+        okBT.setPadding(50, 10, 10, 10);   // Set Position
+        okBT.setTextColor(getResources().getColor(R.color.colorGreen));
+        okBT.setLayoutParams(neutralBtnLP);
+        okBT.setText("Slet");
+
+        final Button cancelBT = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        LinearLayout.LayoutParams negBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
+        negBtnLP.gravity = Gravity.FILL_HORIZONTAL;
+        cancelBT.setTextColor(Color.RED);
+        cancelBT.setLayoutParams(negBtnLP);
+        cancelBT.setText("Fortryd");
+
+    }
+
+    public void showMenu (View view)
+    {
+        PopupMenu menu = new PopupMenu (this, view);
+        menu.setOnMenuItemClickListener (new PopupMenu.OnMenuItemClickListener ()
+        {
+
+            @Override
+            public boolean onMenuItemClick (MenuItem item)
+            {
+                int id = item.getItemId();
+                switch (id)
+                {
+                    case R.id.menu_comment_delete: Log.i (TAG, "Slet");
+                    {
+
+                        break;
+                    }
+                    case R.id.menu_comment_edit: Log.i (TAG, "Rediger"); break;
+                }
+                return true;
+            }
+        });
+        menu.inflate (R.menu.menu_comment);
+        menu.show();
+    }
+
 
     private class PostCommentTask extends AsyncTask<String, Void, CharSequence> {
 
@@ -315,6 +403,32 @@ private TextView
 
         }
         return null;
+    }
+
+    private class DeleteTask extends AsyncTask<String, Void, CharSequence> {
+        @Override
+        protected CharSequence doInBackground(String... urls) {
+            String urlString = urls[0];
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("DELETE");
+                int responseCode = connection.getResponseCode();
+                if (responseCode % 100 != 2) {
+                    throw new IOException("Response code: " + responseCode);
+                }
+                return "Nothing";
+            } catch (MalformedURLException e) {
+                return e.getMessage() + " " + urlString;
+            } catch (IOException e) {
+                return e.getMessage();
+            }
+        }
+
+        @Override
+        protected void onCancelled(CharSequence charSequence) {
+            super.onCancelled(charSequence);
+        }
     }
 
 }
