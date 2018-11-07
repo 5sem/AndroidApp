@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -199,9 +200,8 @@ private final String TAG = "SpecificTrack";
         @Override
         public void onClick(DialogInterface dialog, int which) {
 
-
             DeleteTask task = new DeleteTask();
-            task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments/");
+            task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments/" );
             finish();
             //TODO finde rigtigt id
         }
@@ -343,15 +343,31 @@ private final String TAG = "SpecificTrack";
                     UserComment userComment = new UserComment(id, trackid, userid,usercomment, created, edited);
                     commentList.add(userComment);
                 }
-                //ListView mainCommentView = findViewById(R.id.specific_track_commentview);
-                //mainCommentView.setAdapter(new CommentAdapter(SpecificTrack.this, commentList));
+                TextView Kommentar = findViewById(R.id.Specific_track_TxtViewKommentar);
+                if (commentList.isEmpty()) Kommentar.setVisibility(View.INVISIBLE);
 
-                ExpandableHeightListView expandableListView = (ExpandableHeightListView) findViewById(R.id.specific_track_commentview);
-
+                ExpandableHeightListView expandableListView = (ExpandableHeightListView) findViewById(R.id.CommentListView);
                 expandableListView.setAdapter(new CommentAdapter(SpecificTrack.this, commentList));
-
-                // This actually does the magic
                 expandableListView.setExpanded(true);
+//                expandableListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                        Log.d(TAG, "onItemClick: " + position);
+//                        int IdToDelete = commentList.get(position).id;
+//                        Log.d(TAG, "comment ID: " +IdToDelete);
+//                        showMenu(view); //TODO: position er random please fix
+//                    }
+//                });
+                expandableListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                                                Log.d(TAG, "onItemClick: " + position);
+                        int IdToDelete = commentList.get(position).id;
+                        Log.d(TAG, "comment ID: " +IdToDelete);
+                        showMenu(view); //TODO: position er random please fix
+                        return false;
+                    }
+                });
 
 
             } catch (JSONException ex) {

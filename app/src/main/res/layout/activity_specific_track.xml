@@ -132,17 +132,25 @@ android:layout_height="match_parent"
 
 
             <TextView
+                android:id="@+id/Specific_track_TxtViewKommentar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Kommentare:"
                 android:textStyle="bold" />
 
+
             <com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView
-                android:id="@+id/specific_track_commentview"
+                android:id="@+id/CommentListView"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp">
             </com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView>
+
+            <!--<ListView-->
+                <!--android:id="@+id/CommentListView"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent">-->
+            <!--</ListView>-->
 
         </LinearLayout>
 

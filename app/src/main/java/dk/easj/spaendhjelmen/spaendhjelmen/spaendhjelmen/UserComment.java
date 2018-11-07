@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 
 public class UserComment implements Serializable {
-    private int id;
+    int id;
     int trackId;
     int userId;
     Calendar created;
