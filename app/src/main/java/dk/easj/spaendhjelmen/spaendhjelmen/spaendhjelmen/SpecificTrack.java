@@ -49,8 +49,16 @@ import dk.easj.spaendhjelmen.spaendhjelmen.R;
 public class SpecificTrack extends AppCompatActivity {
 private Track track;
 private final ArrayList<UserComment> commentList = new ArrayList<>();
-private TextView specific_track_information, specific_track_parkinginformation;
-    @Override
+private TextView
+        specific_track_information,
+        specific_track_parkinginformation,
+        specific_track_length,
+        specific_track_city,
+        specific_track_region,
+        specific_track_maxHeight,
+        specific_track_difficulty;
+
+@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_specific_track);
@@ -70,6 +78,22 @@ private TextView specific_track_information, specific_track_parkinginformation;
         specific_track_parkinginformation = findViewById(R.id.specific_track_parkinginformation);
         specific_track_parkinginformation.setText(track.parkInfo);
 
+        specific_track_length = findViewById(R.id.specific_track_length);
+        String stringLength = Double.toString(track.length);
+        specific_track_length.setText(stringLength + " km");
+
+        specific_track_city = findViewById(R.id.specific_track_city);
+        specific_track_city.setText(track.city);
+
+        specific_track_region = findViewById(R.id.specific_track_region);
+        specific_track_region.setText(track.regional);
+
+        specific_track_maxHeight = findViewById(R.id.specific_track_maxHeight);
+        String stringMaxHeight = Double.toString(track.maxHeight);
+        specific_track_maxHeight.setText(stringMaxHeight + " m");
+
+        specific_track_difficulty = findViewById(R.id.specific_track_difficulty);
+        specific_track_difficulty.setText(colorCodeConverter(track.colorCode));
     }
 
 
@@ -276,6 +300,21 @@ private TextView specific_track_information, specific_track_parkinginformation;
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timeInMilliSeconds);
         return calendar;
+    }
+
+    public String colorCodeConverter(String color) {
+        if (color.equals("red"))
+            return "rød";
+        if (color.equals("black"))
+            return "sort";
+        if (color.equals("blue"))
+            return "blå";
+        if (color.equals("green"))
+            return "grøn";
+        else{
+
+        }
+        return null;
     }
 
 }
