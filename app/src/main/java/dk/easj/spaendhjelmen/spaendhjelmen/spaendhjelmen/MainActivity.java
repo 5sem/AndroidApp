@@ -54,17 +54,15 @@ public class MainActivity extends AppCompatActivity {
             public void onFocusChange(View arg0, boolean hasfocus){
                 if (hasfocus){
                     Log.d(TAG, "has focus");
-
                     DeleteBtn.setVisibility(View.VISIBLE);
                 }else{
                     Log.d(TAG, "not focus");
                     DeleteBtn.setVisibility(View.INVISIBLE);
-
                 }
             }
         });
 
-
+        multiSearchEditText.clearFocus();
     }
 
     //inflater meny
