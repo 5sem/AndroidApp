@@ -59,6 +59,7 @@ public class CommentAdapter extends BaseAdapter {
         txtcomment.setText(comment.usercomment);
         txtedited.setText(dateFormat.format(comment.edited.getTimeInMillis()));
         txtcreated.setText(dateFormat.format(comment.created.getTimeInMillis()));
+        imageView.setImageResource(R.drawable.ic_person_black_24dp);
 
 
         return convertView;
