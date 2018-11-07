@@ -1,6 +1,9 @@
 package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.inputmethodservice.Keyboard;
+import android.nfc.Tag;
 import android.printservice.PrintService;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,9 +12,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -29,15 +34,37 @@ import dk.easj.spaendhjelmen.spaendhjelmen.R;
 public class MainActivity extends AppCompatActivity {
     private final ArrayList<Track> trackList = new ArrayList<>();
     private final ArrayList<Track> searchTrackList = new ArrayList<>();
+    private  EditText multiSearchEditText;
+    private ImageButton DeleteBtn;
+    private final String TAG = "MainActiviy";
     ProgressBar pgb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainpage);
         Toolbar toolbar = findViewById(R.id.toolbarmain);
-        pgb = (ProgressBar) findViewById(R.id.progressbar);
+        pgb = findViewById(R.id.progressbar);
+        multiSearchEditText = findViewById(R.id.multiSearchEditText);
+        DeleteBtn = findViewById(R.id.toolbarmain_ImageBtnDelete);
         setSupportActionBar(toolbar);
         setTitle("");
+
+        multiSearchEditText.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+            @Override
+            public void onFocusChange(View arg0, boolean hasfocus){
+                if (hasfocus){
+                    Log.d(TAG, "has focus");
+
+                    DeleteBtn.setVisibility(View.VISIBLE);
+                }else{
+                    Log.d(TAG, "not focus");
+                    DeleteBtn.setVisibility(View.INVISIBLE);
+
+                }
+            }
+        });
+
+
     }
 
     //inflater meny
@@ -59,8 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void MainPageMultiSearchClicked(View view) {
         searchTrackList.clear();
-
-        String multiSearch = ((EditText) findViewById(R.id.multiSearchEditText)).getText().toString().toLowerCase();
+        String multiSearch = multiSearchEditText.getText().toString().toLowerCase();
 
         //TODO: fix sortering, hopper stadig ind i hillerød ved søgning på rød
         for (Track t : trackList){
@@ -109,7 +135,9 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
+        multiSearchEditText.clearFocus();
+        InputMethodManager inputMethodManager = (InputMethodManager)  this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
     }
 
     public void MainPageMultiSearchClearClicked(View view) {
