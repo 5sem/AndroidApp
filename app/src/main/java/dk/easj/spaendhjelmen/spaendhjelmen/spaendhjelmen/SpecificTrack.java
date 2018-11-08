@@ -103,12 +103,7 @@ private final String TAG = "SpecificTrack";
 
 
     public void mainFloatBtnClicked(View view) {
-        openDialog();
-    }
-
-    public void openDialog() {
-
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+    AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 
         // Set Custom Title
         TextView title = new TextView(this);
@@ -145,7 +140,6 @@ private final String TAG = "SpecificTrack";
                     String jsonDocument = jsonObject.toString();
                     PostCommentTask task = new PostCommentTask();
                     task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments", jsonDocument);
-                    //TODO: skal blive under den specifike track efter man har oprettet sin kommentar
                 }
                 catch (JSONException ex){
                     Log.d("add",ex.toString());
@@ -181,63 +175,7 @@ private final String TAG = "SpecificTrack";
         cancelBT.setText("Fortryd");
     }
 
-    public void menu_Comment_Delete_Clicked(MenuItem item) {
-        openDialogDelete();
-    }
-
-    public void openDialogDelete(){
-    AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-
-    TextView title = new TextView(this);
-    title.setText("Slet kommentar?");
-    title.setPadding(10, 10, 10, 10);
-    title.setGravity(Gravity.CENTER);
-    title.setTextColor(Color.BLACK);
-    title.setTextSize(20);
-    alertDialog.setCustomTitle(title);
-
-    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Slet", new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-
-            DeleteTask task = new DeleteTask();
-            task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments/" );
-            finish();
-            //TODO finde rigtigt id
-        }
-    });
-
-
-
-    alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Fortryd", new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-
-        }
-    });
-
-        new Dialog(getApplicationContext());
-        alertDialog.show();
-
-        // Set Properties for OK Button
-        final Button okBT = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-        LinearLayout.LayoutParams neutralBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
-        neutralBtnLP.gravity = Gravity.FILL_HORIZONTAL;
-        okBT.setPadding(50, 10, 10, 10);   // Set Position
-        okBT.setTextColor(getResources().getColor(R.color.colorGreen));
-        okBT.setLayoutParams(neutralBtnLP);
-        okBT.setText("Slet");
-
-        final Button cancelBT = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-        LinearLayout.LayoutParams negBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
-        negBtnLP.gravity = Gravity.FILL_HORIZONTAL;
-        cancelBT.setTextColor(Color.RED);
-        cancelBT.setLayoutParams(negBtnLP);
-        cancelBT.setText("Fortryd");
-
-    }
-
-    public void showMenu (View view)
+    public void showMenu (View view, final int idtodelete)
     {
         PopupMenu menu = new PopupMenu (this, view);
         menu.setOnMenuItemClickListener (new PopupMenu.OnMenuItemClickListener ()
@@ -252,9 +190,59 @@ private final String TAG = "SpecificTrack";
                     case R.id.menu_comment_delete: Log.i (TAG, "Slet");
                     {
 
+                        AlertDialog alertDialog = new AlertDialog.Builder(SpecificTrack.this).create();
+
+                        TextView title = new TextView(SpecificTrack.this);
+                        title.setText("Slet kommentar?");
+                        title.setPadding(10, 10, 10, 10);
+                        title.setGravity(Gravity.CENTER);
+                        title.setTextColor(Color.BLACK);
+                        title.setTextSize(20);
+                        alertDialog.setCustomTitle(title);
+
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Slet", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+
+                                DeleteTask task = new DeleteTask();
+                                task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments/"+ idtodelete);
+                                finish();
+                            }
+                        });
+
+
+
+                        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Fortryd", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+
+                        new Dialog(getApplicationContext());
+                        alertDialog.show();
+
+                        // Set Properties for OK Button
+                        final Button okBT = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+                        LinearLayout.LayoutParams neutralBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
+                        neutralBtnLP.gravity = Gravity.FILL_HORIZONTAL;
+                        okBT.setPadding(50, 10, 10, 10);   // Set Position
+                        okBT.setTextColor(getResources().getColor(R.color.colorGreen));
+                        okBT.setLayoutParams(neutralBtnLP);
+                        okBT.setText("Slet");
+
+                        final Button cancelBT = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                        LinearLayout.LayoutParams negBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
+                        negBtnLP.gravity = Gravity.FILL_HORIZONTAL;
+                        cancelBT.setTextColor(Color.RED);
+                        cancelBT.setLayoutParams(negBtnLP);
+                        cancelBT.setText("Fortryd");
+
                         break;
                     }
                     case R.id.menu_comment_edit: Log.i (TAG, "Rediger"); break;
+                    //TODO: redigere
                 }
                 return true;
             }
@@ -349,23 +337,11 @@ private final String TAG = "SpecificTrack";
                 ExpandableHeightListView expandableListView = (ExpandableHeightListView) findViewById(R.id.CommentListView);
                 expandableListView.setAdapter(new CommentAdapter(SpecificTrack.this, commentList));
                 expandableListView.setExpanded(true);
-//                expandableListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                    @Override
-//                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                        Log.d(TAG, "onItemClick: " + position);
-//                        int IdToDelete = commentList.get(position).id;
-//                        Log.d(TAG, "comment ID: " +IdToDelete);
-//                        showMenu(view); //TODO: position er random please fix
-//                    }
-//                });
-                expandableListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                expandableListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
-                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                                                Log.d(TAG, "onItemClick: " + position);
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         int IdToDelete = commentList.get(position).id;
-                        Log.d(TAG, "comment ID: " +IdToDelete);
-                        showMenu(view); //TODO: position er random please fix
-                        return false;
+                        showMenu(view, IdToDelete);
                     }
                 });
 
@@ -408,13 +384,13 @@ private final String TAG = "SpecificTrack";
 
     public String colorCodeConverter(String color) {
         if (color.equals("red"))
-            return "rød";
+            return "Rød";
         if (color.equals("black"))
-            return "sort";
+            return "Sort";
         if (color.equals("blue"))
-            return "blå";
+            return "Blå";
         if (color.equals("green"))
-            return "grøn";
+            return "Grøn";
         else{
 
         }
@@ -445,6 +421,15 @@ private final String TAG = "SpecificTrack";
         protected void onCancelled(CharSequence charSequence) {
             super.onCancelled(charSequence);
         }
+        @Override
+        protected void onPostExecute(CharSequence charSequence) {
+            super.onPostExecute(charSequence);
+            Toast.makeText(SpecificTrack.this, "Kommentar Slettet!", Toast.LENGTH_LONG).show();
+            Log.d("POSTEXECUTE", charSequence.toString());
+            finish();
+            startActivity(getIntent());
+        }
+
     }
 
 }

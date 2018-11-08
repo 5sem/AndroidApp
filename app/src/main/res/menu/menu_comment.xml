@@ -8,7 +8,7 @@
         android:title="Slet"
         app:showAsAction="never"
         android:id="@+id/menu_comment_delete"
-        android:onClick="menu_Comment_Delete_Clicked"/>
+        />
 
     <item
         android:icon="@mipmap/ic_launcher_round"
