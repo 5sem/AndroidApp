@@ -1,4 +1,4 @@
-package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen;
+package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.UserComment;
 
 public class CommentAdapter extends BaseAdapter {
 

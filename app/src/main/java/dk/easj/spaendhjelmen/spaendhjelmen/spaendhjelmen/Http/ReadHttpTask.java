@@ -1,9 +1,11 @@
-package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen;
+package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Http;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.IOException;
+
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Http.HttpHelper;
 
 
 public class ReadHttpTask extends AsyncTask<String, Void, CharSequence> {

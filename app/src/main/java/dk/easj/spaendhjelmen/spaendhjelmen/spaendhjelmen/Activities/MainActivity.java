@@ -1,11 +1,7 @@
-package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen;
+package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.inputmethodservice.Keyboard;
-import android.nfc.Tag;
-import android.printservice.PrintService;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -14,7 +10,6 @@ import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -26,10 +21,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.TrackAdapter;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Http.ReadHttpTask;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Track;
 
 public class MainActivity extends AppCompatActivity {
     private final ArrayList<Track> trackList = new ArrayList<>();
@@ -37,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private  EditText multiSearchEditText;
     private ImageButton DeleteBtn;
     private final String TAG = "MainActiviy";
-    ProgressBar pgb;
+    private ProgressBar pgb;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,13 +62,6 @@ public class MainActivity extends AppCompatActivity {
         multiSearchEditText.clearFocus();
     }
 
-    //inflater meny
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
     //henter informationer fra rest service
     @Override
     protected void onStart() {
@@ -82,11 +72,19 @@ public class MainActivity extends AppCompatActivity {
         task.execute("https://spaendhjelmenrest.azurewebsites.net/service1.svc/tracks");
     }
 
+    //inflater meny
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    //region Multi serach
+
     public void MainPageMultiSearchClicked(View view) {
         searchTrackList.clear();
         String multiSearch = multiSearchEditText.getText().toString().toLowerCase();
 
-        //TODO: fix sortering, hopper stadig ind i hillerød ved søgning på rød
         for (Track t : trackList){
             if (multiSearch.equals("rød") || multiSearch.equals("grøn") || multiSearch.equals("sort") || multiSearch.equals("blå"))
             {
@@ -157,6 +155,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    //endregion
+
+    //region ReadTask Class
+
     private class ReadTask extends ReadHttpTask {
         @Override
         protected void onPostExecute(CharSequence jsonString) {
@@ -210,5 +212,7 @@ public class MainActivity extends AppCompatActivity {
             Log.e("MAINACTIVITY", message.toString());
         }
     }
+
+    //endregion
 
 }

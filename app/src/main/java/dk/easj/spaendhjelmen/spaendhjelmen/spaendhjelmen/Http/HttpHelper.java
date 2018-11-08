@@ -1,4 +1,4 @@
-package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen;
+package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Http;
 
 import java.io.BufferedReader;
 import java.io.IOException;

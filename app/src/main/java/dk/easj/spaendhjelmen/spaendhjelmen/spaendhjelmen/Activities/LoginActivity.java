@@ -1,4 +1,4 @@
-package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen;
+package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;

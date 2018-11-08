@@ -1,4 +1,4 @@
-package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen;
+package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.ArrayList;
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Track;
 
 public class TrackAdapter extends BaseAdapter {
     ArrayList<Track> trackList;

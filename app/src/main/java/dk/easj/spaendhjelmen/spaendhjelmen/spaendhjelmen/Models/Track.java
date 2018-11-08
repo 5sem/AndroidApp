@@ -1,22 +1,22 @@
-package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen;
+package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models;
 
 import java.io.Serializable;
 
 public class Track implements Serializable {
     private int id;
-    int pictureId;
-    String name;
-    String info;
-    double longitude;
-    double latitude;
-    String address;
-    String colorCode;
-    double length;
-    double maxHeight;
-    String parkInfo;
-    String regional;
-    int postalcode;
-    String city;
+    public int pictureId;
+    public String name;
+    public String info;
+    public double longitude;
+    public double latitude;
+    public String address;
+    public String colorCode;
+    public double length;
+    public double maxHeight;
+    public String parkInfo;
+    public String regional;
+    public int postalcode;
+    public String city;
 
     public Track(int id, int pictureid, String name, String info, double longitude, double latitude, String address, String colorcode, double length, double maxheight, String parkinfo, String regional, int postalcode, String city){
         this.id =id;

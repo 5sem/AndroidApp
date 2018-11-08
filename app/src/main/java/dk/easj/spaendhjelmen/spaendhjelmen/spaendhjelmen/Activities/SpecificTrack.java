@@ -1,31 +1,23 @@
-package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen;
+package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.PopupMenu;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +26,6 @@ import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -45,9 +36,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.CommentAdapter;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Http.ReadHttpTask;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Track;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.UserComment;
 
 public class SpecificTrack extends AppCompatActivity {
 private Track track;
@@ -101,6 +95,16 @@ private final String TAG = "SpecificTrack";
         specific_track_difficulty.setText(colorCodeConverter(track.colorCode));
     }
 
+    //henter informationer fra rest service
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("START", "onStart: ");
+        commentList.clear();
+        ReadTask task = new ReadTask();
+        task.execute("https://spaendhjelmenrest.azurewebsites.net/service1.svc/comments/" + track.getId());
+        Log.d("on start", "onStart: " + track.getId());
+    }
 
     public void mainFloatBtnClicked(View view) {
     AlertDialog alertDialog = new AlertDialog.Builder(this).create();
@@ -251,6 +255,70 @@ private final String TAG = "SpecificTrack";
         menu.show();
     }
 
+    //region Coonverters
+    //converterer jsonstring til tid
+    public static Calendar JsonDateToDate(String jsonDate) {
+        //  "/Date(1321867151710+0100)/"
+        int idx1 = jsonDate.indexOf("(");
+        int idx2 = jsonDate.indexOf(")") - 5;
+        String s = jsonDate.substring(idx1 + 1, idx2);
+        long timeInMilliSeconds = Long.valueOf(s);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timeInMilliSeconds);
+        return calendar;
+    }
+
+    public String colorCodeConverter(String color) {
+        if (color.equals("red"))
+            return "Rød";
+        if (color.equals("black"))
+            return "Sort";
+        if (color.equals("blue"))
+            return "Blå";
+        if (color.equals("green"))
+            return "Grøn";
+        else{
+
+        }
+        return null;
+    }
+    //endregion
+
+//region Tasks
+    private class DeleteTask extends AsyncTask<String, Void, CharSequence> {
+        @Override
+        protected CharSequence doInBackground(String... urls) {
+            String urlString = urls[0];
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("DELETE");
+                int responseCode = connection.getResponseCode();
+                if (responseCode % 100 != 2) {
+                    throw new IOException("Response code: " + responseCode);
+                }
+                return "Nothing";
+            } catch (MalformedURLException e) {
+                return e.getMessage() + " " + urlString;
+            } catch (IOException e) {
+                return e.getMessage();
+            }
+        }
+
+        @Override
+        protected void onCancelled(CharSequence charSequence) {
+            super.onCancelled(charSequence);
+        }
+        @Override
+        protected void onPostExecute(CharSequence charSequence) {
+            super.onPostExecute(charSequence);
+            Toast.makeText(SpecificTrack.this, "Kommentar Slettet!", Toast.LENGTH_LONG).show();
+            Log.d("POSTEXECUTE", charSequence.toString());
+            finish();
+            startActivity(getIntent());
+        }
+
+    }
 
     private class PostCommentTask extends AsyncTask<String, Void, CharSequence> {
 
@@ -359,77 +427,5 @@ private final String TAG = "SpecificTrack";
         }
     }
 
-    //henter informationer fra rest service
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d("START", "onStart: ");
-        commentList.clear();
-        ReadTask task = new ReadTask();
-        task.execute("https://spaendhjelmenrest.azurewebsites.net/service1.svc/comments/" + track.getId());
-        Log.d("on start", "onStart: " + track.getId());
-    }
-
-    //converterer jsonstring til tid
-    public static Calendar JsonDateToDate(String jsonDate) {
-        //  "/Date(1321867151710+0100)/"
-        int idx1 = jsonDate.indexOf("(");
-        int idx2 = jsonDate.indexOf(")") - 5;
-        String s = jsonDate.substring(idx1 + 1, idx2);
-        long timeInMilliSeconds = Long.valueOf(s);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeInMilliSeconds);
-        return calendar;
-    }
-
-    public String colorCodeConverter(String color) {
-        if (color.equals("red"))
-            return "Rød";
-        if (color.equals("black"))
-            return "Sort";
-        if (color.equals("blue"))
-            return "Blå";
-        if (color.equals("green"))
-            return "Grøn";
-        else{
-
-        }
-        return null;
-    }
-
-    private class DeleteTask extends AsyncTask<String, Void, CharSequence> {
-        @Override
-        protected CharSequence doInBackground(String... urls) {
-            String urlString = urls[0];
-            try {
-                URL url = new URL(urlString);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("DELETE");
-                int responseCode = connection.getResponseCode();
-                if (responseCode % 100 != 2) {
-                    throw new IOException("Response code: " + responseCode);
-                }
-                return "Nothing";
-            } catch (MalformedURLException e) {
-                return e.getMessage() + " " + urlString;
-            } catch (IOException e) {
-                return e.getMessage();
-            }
-        }
-
-        @Override
-        protected void onCancelled(CharSequence charSequence) {
-            super.onCancelled(charSequence);
-        }
-        @Override
-        protected void onPostExecute(CharSequence charSequence) {
-            super.onPostExecute(charSequence);
-            Toast.makeText(SpecificTrack.this, "Kommentar Slettet!", Toast.LENGTH_LONG).show();
-            Log.d("POSTEXECUTE", charSequence.toString());
-            finish();
-            startActivity(getIntent());
-        }
-
-    }
-
+    //endregion
 }

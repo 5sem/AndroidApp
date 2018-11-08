@@ -1,15 +1,15 @@
-package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen;
+package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models;
 
 import java.io.Serializable;
 import java.util.Calendar;
 
 public class UserComment implements Serializable {
-    int id;
-    int trackId;
-    int userId;
-    Calendar created;
-    Calendar edited;
-    String usercomment;
+    public int id;
+    public int trackId;
+    public int userId;
+    public Calendar created;
+    public Calendar edited;
+    public String usercomment;
 
     public UserComment(int id, int trackid, int userid,String comment, Calendar created, Calendar edited){
         this.created = created;
