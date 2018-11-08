@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -55,6 +56,8 @@ private TextView
         specific_track_region,
         specific_track_maxHeight,
         specific_track_difficulty;
+private ImageView imgview;
+
 private final String TAG = "SpecificTrack";
 
 @Override
@@ -93,6 +96,9 @@ private final String TAG = "SpecificTrack";
 
         specific_track_difficulty = findViewById(R.id.specific_track_difficulty);
         specific_track_difficulty.setText(colorCodeConverter(track.colorCode));
+
+        imgview = findViewById(R.id.specific_track_image);
+        imgview.setImageResource(R.drawable.underconstruction);
     }
 
     //henter informationer fra rest service
