@@ -113,6 +113,9 @@ public class MainActivity extends AppCompatActivity {
                else if (t.city.toLowerCase().contains(multiSearch)){
                     searchTrackList.add(t);
             }
+            else if(t.name.toLowerCase().contains(multiSearch)){
+                searchTrackList.add(t);
+            }
             else{
 
             }
