@@ -1,6 +1,7 @@
 package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -134,15 +135,12 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        multiSearchEditText.clearFocus();
-        InputMethodManager inputMethodManager = (InputMethodManager)  this.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE); imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
     public void MainPageMultiSearchClearClicked(View view) {
 
-        EditText multisearch = findViewById(R.id.multiSearchEditText);
-        multisearch.setText("");
+        multiSearchEditText.setText("");
         ListView mainListView = findViewById(R.id.mainListView);
 
         mainListView.setAdapter(new TrackAdapter(MainActivity.this, trackList));
