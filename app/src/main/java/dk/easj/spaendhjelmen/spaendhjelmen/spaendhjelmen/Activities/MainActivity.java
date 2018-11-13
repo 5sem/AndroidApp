@@ -7,14 +7,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -47,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         setTitle("");
 
+
+
         multiSearchEditText.setOnFocusChangeListener(new View.OnFocusChangeListener(){
             @Override
             public void onFocusChange(View arg0, boolean hasfocus){
@@ -60,8 +65,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        multiSearchEditText.setOnEditorActionListener(searchListener);
         multiSearchEditText.clearFocus();
     }
+
+    private TextView.OnEditorActionListener searchListener = new TextView.OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+            MainPageMultiSearchClicked(v);
+            return false;
+        }
+    };
 
     //henter informationer fra rest service
     @Override
@@ -81,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //region Multi serach
+
+
 
     public void MainPageMultiSearchClicked(View view) {
         searchTrackList.clear();
@@ -138,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
         InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE); imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
-    public void MainPageMultiSearchClearClicked(View view) {
+    public void MainPageMultiSearchClearClicked() {
 
         multiSearchEditText.setText("");
         ListView mainListView = findViewById(R.id.mainListView);

@@ -19,6 +19,7 @@
             android:layout_height="match_parent"
             android:layout_weight="14"
             android:hint="Søg..."
+            android:imeOptions="actionSearch"
             android:textStyle="bold" />
         <ImageButton
             android:visibility="invisible"
