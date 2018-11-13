@@ -4,6 +4,9 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -30,6 +33,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -37,6 +41,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.CommentAdapter;
@@ -45,22 +51,23 @@ import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Track;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.UserComment;
 
 public class SpecificTrack extends AppCompatActivity {
-private Track track;
-private UserComment userComment;
-private final ArrayList<UserComment> commentList = new ArrayList<>();
-private TextView
-        specific_track_information,
-        specific_track_parkinginformation,
-        specific_track_length,
-        specific_track_city,
-        specific_track_region,
-        specific_track_maxHeight,
-        specific_track_difficulty;
-private ImageView imgview;
+    private Track track;
+    private UserComment userComment;
+    private final ArrayList<UserComment> commentList = new ArrayList<>();
+    private TextView
+            specific_track_information,
+            specific_track_parkinginformation,
+            specific_track_length,
+            specific_track_city,
+            specific_track_region,
+            specific_track_maxHeight,
+            specific_track_difficulty,
+            specific_track_addr;
+    private ImageView imgview;
 
-private final String TAG = "SpecificTrack";
+    private final String TAG = "SpecificTrack";
 
-@Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_specific_track);
@@ -75,7 +82,11 @@ private final String TAG = "SpecificTrack";
         setSupportActionBar(toolbar);
 
         specific_track_information = findViewById(R.id.specific_track_information);
+
         specific_track_information.setText(track.info);
+
+        specific_track_addr = findViewById(R.id.specific_track_addr);
+        specific_track_addr.setText(track.address + " " + track.city + " " + track.postalcode);
 
         specific_track_parkinginformation = findViewById(R.id.specific_track_parkinginformation);
         specific_track_parkinginformation.setText(track.parkInfo);
@@ -113,7 +124,7 @@ private final String TAG = "SpecificTrack";
     }
 
     public void mainFloatBtnClicked(View view) {
-    AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 
         // Set Custom Title
         TextView title = new TextView(this);
@@ -134,7 +145,7 @@ private final String TAG = "SpecificTrack";
 
         // Set Button
         // you can more buttons
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"OK", new DialogInterface.OnClickListener() {
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // Perform Action on Button
 
@@ -142,24 +153,23 @@ private final String TAG = "SpecificTrack";
                 int userid = 1; //TODO: admin id, ændre til logged in user id
                 int trackid = track.getId();
 
-                try{
+                try {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("UserId",userid);
+                    jsonObject.put("UserId", userid);
                     jsonObject.put("TrackId", trackid);
-                    jsonObject.put("UserComment",comment);
+                    jsonObject.put("UserComment", comment);
                     String jsonDocument = jsonObject.toString();
                     PostCommentTask task = new PostCommentTask();
                     task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments", jsonDocument);
-                }
-                catch (JSONException ex){
-                    Log.d("add",ex.toString());
+                } catch (JSONException ex) {
+                    Log.d("add", ex.toString());
 
                 }
 
             }
         });
 
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"CANCEL", new DialogInterface.OnClickListener() {
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "CANCEL", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // Perform Action on Button
             }
@@ -185,19 +195,16 @@ private final String TAG = "SpecificTrack";
         cancelBT.setText("Fortryd");
     }
 
-    public void showMenu (View view, final int idtodelete)
-    {
-        PopupMenu menu = new PopupMenu (this, view);
-        menu.setOnMenuItemClickListener (new PopupMenu.OnMenuItemClickListener ()
-        {
+    public void showMenu(View view, final int idtodelete) {
+        PopupMenu menu = new PopupMenu(this, view);
+        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
             @Override
-            public boolean onMenuItemClick (MenuItem item)
-            {
+            public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
-                switch (id)
-                {
-                    case R.id.menu_comment_delete: Log.i (TAG, "Slet");
+                switch (id) {
+                    case R.id.menu_comment_delete:
+                        Log.i(TAG, "Slet");
                     {
 
                         AlertDialog alertDialog = new AlertDialog.Builder(SpecificTrack.this).create();
@@ -216,11 +223,10 @@ private final String TAG = "SpecificTrack";
 
 
                                 DeleteTask task = new DeleteTask();
-                                task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments/"+ idtodelete);
+                                task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments/" + idtodelete);
                                 finish();
                             }
                         });
-
 
 
                         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Fortryd", new DialogInterface.OnClickListener() {
@@ -251,15 +257,33 @@ private final String TAG = "SpecificTrack";
 
                         break;
                     }
-                    case R.id.menu_comment_edit: Log.i (TAG, "Rediger"); break;
+                    case R.id.menu_comment_edit:
+                        Log.i(TAG, "Rediger");
+                        break;
                     //TODO: redigere
                 }
                 return true;
             }
         });
-        menu.inflate (R.menu.menu_comment);
+        menu.inflate(R.menu.menu_comment);
         menu.show();
     }
+
+    //region google map
+
+    public void openGoogleMaps(View view) {
+
+        Uri gmmIntentUri = Uri.parse("geo:" + track.latitude +"," + track.longitude +"?q=" + Uri.encode( track.address+"," + track.city));
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        if (mapIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(mapIntent);
+        }
+    }
+
+
+
+    //endregion
 
     //region Coonverters
     //converterer jsonstring til tid
@@ -283,14 +307,14 @@ private final String TAG = "SpecificTrack";
             return "Blå";
         if (color.equals("green"))
             return "Grøn";
-        else{
+        else {
 
         }
         return null;
     }
     //endregion
 
-//region Tasks
+    //region Tasks
     private class DeleteTask extends AsyncTask<String, Void, CharSequence> {
         @Override
         protected CharSequence doInBackground(String... urls) {
@@ -315,6 +339,7 @@ private final String TAG = "SpecificTrack";
         protected void onCancelled(CharSequence charSequence) {
             super.onCancelled(charSequence);
         }
+
         @Override
         protected void onPostExecute(CharSequence charSequence) {
             super.onPostExecute(charSequence);
@@ -402,7 +427,7 @@ private final String TAG = "SpecificTrack";
 
                     Calendar edited = JsonDateToDate(getStringEdited);
 
-                    UserComment userComment = new UserComment(id, trackid, userid,usercomment, created, edited);
+                    UserComment userComment = new UserComment(id, trackid, userid, usercomment, created, edited);
                     commentList.add(userComment);
                 }
                 TextView Kommentar = findViewById(R.id.Specific_track_TxtViewKommentar);

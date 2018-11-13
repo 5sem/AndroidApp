@@ -18,6 +18,7 @@ android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize">
 
     <ScrollView
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -44,6 +45,32 @@ android:layout_height="match_parent"
                 android:text="Personal Rating: ⋆⋆⋆⋆⋆"
                 android:textSize="20dp" />
 
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Addresse: "
+                android:textStyle="bold"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_gravity="center"
+                    android:id="@+id/specific_track_addr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ic_location_on_black_24dp"
+                    android:onClick="openGoogleMaps"
+                    android:text="Se på kort" />
+            </LinearLayout>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,6 +82,8 @@ android:layout_height="match_parent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"/>
+
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -140,10 +169,10 @@ android:layout_height="match_parent"
 
 
             <com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView
+               android:layout_marginTop="6dp"
                 android:id="@+id/CommentListView"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp">
+                android:layout_height="wrap_content">
             </com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView>
 
             <!--<ListView-->
