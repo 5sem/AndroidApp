@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -25,11 +26,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.TrackAdapter;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Http.ReadHttpTask;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Track;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 public class MainActivity extends AppCompatActivity {
     private final ArrayList<Track> trackList = new ArrayList<>();
@@ -38,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton DeleteBtn;
     private final String TAG = "MainActiviy";
     private ProgressBar pgb;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE); imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
-    public void MainPageMultiSearchClearClicked() {
+    public void MainPageMultiSearchClearClicked(View view) {
 
         multiSearchEditText.setText("");
         ListView mainListView = findViewById(R.id.mainListView);
@@ -171,6 +178,27 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void sorterDifficulty(MenuItem item) {
+        Log.d(TAG, "sorterDifficulty: start");
+        ArrayList<Track> _list = trackList;
+        if (!searchTrackList.isEmpty()) _list = searchTrackList;
+
+        Log.d(TAG, "sorterDifficulty: efter if");
+        Collections.sort(_list,new  ColourComparator());
+        Log.d(TAG, "sorterDifficulty: efter sort");
+        ListView mainListView = findViewById(R.id.mainListView);
+        mainListView.setAdapter(new TrackAdapter(MainActivity.this, _list));
+
+    }
+
+
+    public class ColourComparator implements Comparator<Track>
+    {
+        public int compare(Track left, Track right) {
+            return left.colorCode.compareTo(right.colorCode);
+        }
     }
 
     //endregion
