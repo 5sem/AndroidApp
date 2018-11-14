@@ -217,6 +217,26 @@ private final String TAG = "SpecificTrack";
         cancelBT.setText("Fortryd");
     }
 
+
+
+    //region google map
+
+    public void openGoogleMaps(View view) {
+
+        Uri gmmIntentUri = Uri.parse("geo:" + track.latitude +"," + track.longitude +"?q=" + Uri.encode( track.address+"," + track.city));
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        if (mapIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(mapIntent);
+        }
+    }
+
+
+
+    //endregion
+
+
+
     public void showMenu (View view, final int idtodelete)
     {
         PopupMenu menu = new PopupMenu (this, view);
@@ -261,6 +281,9 @@ private final String TAG = "SpecificTrack";
 
                             }
                         });
+
+
+
 
                         new Dialog(getApplicationContext());
                         alertDialog.show();
