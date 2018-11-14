@@ -4,6 +4,9 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -32,6 +35,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -39,6 +43,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.CommentAdapter;
@@ -48,18 +54,19 @@ import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Track;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.UserComment;
 
 public class SpecificTrack extends AppCompatActivity {
-private Track track;
-private UserComment userComment;
-private final ArrayList<UserComment> commentList = new ArrayList<>();
-private TextView
-        specific_track_information,
-        specific_track_parkinginformation,
-        specific_track_length,
-        specific_track_city,
-        specific_track_region,
-        specific_track_maxHeight,
-        specific_track_difficulty;
-private ImageView imgview;
+    private Track track;
+    private UserComment userComment;
+    private final ArrayList<UserComment> commentList = new ArrayList<>();
+    private TextView
+            specific_track_information,
+            specific_track_parkinginformation,
+            specific_track_length,
+            specific_track_city,
+            specific_track_region,
+            specific_track_maxHeight,
+            specific_track_difficulty,
+            specific_track_addr;
+    private ImageView imgview;
 
 private ViewPager viewPager;
 
