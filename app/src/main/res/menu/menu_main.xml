@@ -5,18 +5,47 @@
     <item
         android:id="@+id/action_nothing_really"
         android:icon="@mipmap/ic_launcher_round"
-        android:orderInCategory="3"
+        android:orderInCategory="1"
         android:title="sorter på SVÆR"
         android:onClick="sorterDifficulty"
         app:showAsAction="never"
-
         />
 
     <item
         android:id="@+id/action_absolutely_nothing"
         android:icon="@mipmap/ic_launcher_round"
-        android:orderInCategory="4"
-        android:title="Nothing2"
+        android:orderInCategory="2"
+        android:title="Sorter2"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_absolutely_nothing2"
+        android:icon="@mipmap/ic_launcher_round"
+        android:orderInCategory="3"
+        android:title="Sorter3"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_indstillinger"
+        android:icon="@mipmap/ic_launcher_round"
+        android:orderInCategory="4"
+        android:title="Indstillinger"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_om"
+        android:icon="@mipmap/ic_launcher_round"
+        android:orderInCategory="5"
+        android:title="Om"
+        android:onClick="Menu_Om_Onclick"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_logud"
+        android:icon="@drawable/ic_exit_to_app_black_24dp"
+        android:orderInCategory="6"
+        android:title="Logud"
+        app:showAsAction="withText"
+        />
 
 </menu>

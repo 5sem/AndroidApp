@@ -3,17 +3,22 @@ package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.RequiresPermission;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -34,6 +39,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -50,12 +57,14 @@ import dk.easj.spaendhjelmen.spaendhjelmen.R;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.CommentAdapter;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.ViewPagerAdapter;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Http.ReadHttpTask;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Picture;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Track;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.UserComment;
 
 public class SpecificTrack extends AppCompatActivity {
     private Track track;
     private UserComment userComment;
+    public static final ArrayList<Picture> pictureList = new ArrayList<>();
     private final ArrayList<UserComment> commentList = new ArrayList<>();
     private TextView
             specific_track_information,
@@ -117,20 +126,11 @@ private final String TAG = "SpecificTrack";
 
         viewPager = findViewById(R.id.viewPagerSpecific);
 
-    ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this);
-    viewPager.setAdapter(viewPagerAdapter);
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this);
+        viewPager.setAdapter(viewPagerAdapter);
 
-
-
-
-
-
-    TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
-    tabLayout.setupWithViewPager(viewPager, true);
-
-
-
-
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
+        tabLayout.setupWithViewPager(viewPager, true);
     }
 
     //henter informationer fra rest service
@@ -141,7 +141,9 @@ private final String TAG = "SpecificTrack";
         commentList.clear();
         ReadTask task = new ReadTask();
         task.execute("https://spaendhjelmenrest.azurewebsites.net/service1.svc/comments/" + track.getId());
-        Log.d("on start", "onStart: " + track.getId());
+        ReadTaskPicture taskpicture = new ReadTaskPicture();
+        taskpicture.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/pictures/" + track.getId());
+
     }
 
     public void mainFloatBtnClicked(View view) {
@@ -216,8 +218,6 @@ private final String TAG = "SpecificTrack";
         cancelBT.setLayoutParams(negBtnLP);
         cancelBT.setText("Fortryd");
     }
-
-
 
     //region google map
 
@@ -487,6 +487,46 @@ private final String TAG = "SpecificTrack";
             Log.e("MAINACTIVITY", message.toString());
         }
     }
+
+    private class ReadTaskPicture extends ReadHttpTask {
+        @Override
+        protected void onPostExecute(CharSequence jsonString) {
+            try {
+
+                JSONArray array = new JSONArray(jsonString.toString());
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject obj = array.getJSONObject(i);
+                    int id = obj.getInt("Id");
+                    String name = obj.getString("Name");
+                    JSONArray jsonarray = obj.getJSONArray("Image");
+
+                    byte[] image = new byte[jsonarray.length()];
+                    for (int counter = 0; counter < jsonarray.length(); counter++) {
+                        image[counter]=(byte)(((int)jsonarray.get(counter)) & 0xFF);
+                    }
+                    Base64.encodeToString(image, Base64.DEFAULT);
+
+                    int trackid = obj.getInt("TrackId");
+
+
+                    Picture Pictures = new Picture(id, name, image, trackid);
+                    pictureList.add(Pictures);
+                }
+
+
+            } catch (JSONException ex) {
+                Log.e("SPECIFICACTIVITY", ex.getMessage());
+            }
+
+        }
+
+        @Override
+        protected void onCancelled(CharSequence message) {
+            Toast.makeText(SpecificTrack.this, "Fejl:" + message.toString(), Toast.LENGTH_SHORT).show();
+            Log.e("SPECIFICACTIVITY", message.toString());
+        }
+    }
+
 
     //endregion
 }
