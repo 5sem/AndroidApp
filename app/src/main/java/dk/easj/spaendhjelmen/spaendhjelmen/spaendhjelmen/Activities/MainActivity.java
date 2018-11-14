@@ -26,11 +26,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.TrackAdapter;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Http.ReadHttpTask;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Track;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 public class MainActivity extends AppCompatActivity {
     private final ArrayList<Track> trackList = new ArrayList<>();
@@ -39,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton DeleteBtn;
     private final String TAG = "MainActiviy";
     private ProgressBar pgb;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,6 +183,27 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void sorterDifficulty(MenuItem item) {
+        Log.d(TAG, "sorterDifficulty: start");
+        ArrayList<Track> _list = trackList;
+        if (!searchTrackList.isEmpty()) _list = searchTrackList;
+
+        Log.d(TAG, "sorterDifficulty: efter if");
+        Collections.sort(_list,new  ColourComparator());
+        Log.d(TAG, "sorterDifficulty: efter sort");
+        ListView mainListView = findViewById(R.id.mainListView);
+        mainListView.setAdapter(new TrackAdapter(MainActivity.this, _list));
+
+    }
+
+
+    public class ColourComparator implements Comparator<Track>
+    {
+        public int compare(Track left, Track right) {
+            return left.colorCode.compareTo(right.colorCode);
+        }
     }
 
     //endregion

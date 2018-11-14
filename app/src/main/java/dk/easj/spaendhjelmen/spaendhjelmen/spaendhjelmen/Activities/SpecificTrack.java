@@ -4,8 +4,13 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -30,6 +35,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -37,26 +43,32 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.CommentAdapter;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.ViewPagerAdapter;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Http.ReadHttpTask;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Track;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.UserComment;
 
 public class SpecificTrack extends AppCompatActivity {
-private Track track;
-private UserComment userComment;
-private final ArrayList<UserComment> commentList = new ArrayList<>();
-private TextView
-        specific_track_information,
-        specific_track_parkinginformation,
-        specific_track_length,
-        specific_track_city,
-        specific_track_region,
-        specific_track_maxHeight,
-        specific_track_difficulty;
-private ImageView imgview;
+    private Track track;
+    private UserComment userComment;
+    private final ArrayList<UserComment> commentList = new ArrayList<>();
+    private TextView
+            specific_track_information,
+            specific_track_parkinginformation,
+            specific_track_length,
+            specific_track_city,
+            specific_track_region,
+            specific_track_maxHeight,
+            specific_track_difficulty,
+            specific_track_addr;
+    private ImageView imgview;
+
+private ViewPager viewPager;
 
 private final String TAG = "SpecificTrack";
 
@@ -97,8 +109,28 @@ private final String TAG = "SpecificTrack";
         specific_track_difficulty = findViewById(R.id.specific_track_difficulty);
         specific_track_difficulty.setText(colorCodeConverter(track.colorCode));
 
-        imgview = findViewById(R.id.specific_track_image);
-        imgview.setImageResource(R.drawable.underconstruction);
+        specific_track_addr = findViewById(R.id.specific_track_addr);
+        specific_track_addr.setText(track.address + " " + track.city + " " + track.postalcode);
+
+        //imgview = findViewById(R.id.specific_track_image);
+        //imgview.setImageResource(R.drawable.underconstruction);
+
+        viewPager = findViewById(R.id.viewPagerSpecific);
+
+    ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this);
+    viewPager.setAdapter(viewPagerAdapter);
+
+
+
+
+
+
+    TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
+    tabLayout.setupWithViewPager(viewPager, true);
+
+
+
+
     }
 
     //henter informationer fra rest service
@@ -185,6 +217,26 @@ private final String TAG = "SpecificTrack";
         cancelBT.setText("Fortryd");
     }
 
+
+
+    //region google map
+
+    public void openGoogleMaps(View view) {
+
+        Uri gmmIntentUri = Uri.parse("geo:" + track.latitude +"," + track.longitude +"?q=" + Uri.encode( track.address+"," + track.city));
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        mapIntent.setPackage("com.google.android.apps.maps");
+        if (mapIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(mapIntent);
+        }
+    }
+
+
+
+    //endregion
+
+
+
     public void showMenu (View view, final int idtodelete)
     {
         PopupMenu menu = new PopupMenu (this, view);
@@ -229,6 +281,9 @@ private final String TAG = "SpecificTrack";
 
                             }
                         });
+
+
+
 
                         new Dialog(getApplicationContext());
                         alertDialog.show();
