@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -49,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
         DeleteBtn = findViewById(R.id.toolbarmain_ImageBtnDelete);
         setSupportActionBar(toolbar);
         setTitle("");
-
-
 
         multiSearchEditText.setOnFocusChangeListener(new View.OnFocusChangeListener(){
             @Override
@@ -95,9 +94,13 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+
+    public void Menu_Om_Onclick(MenuItem item) {
+        Intent intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
+    }
+
     //region Multi serach
-
-
 
     public void MainPageMultiSearchClicked(View view) {
         searchTrackList.clear();
@@ -128,10 +131,13 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             }
-               else if (t.city.toLowerCase().contains(multiSearch)){
+            else if (t.city.toLowerCase().contains(multiSearch)){
                     searchTrackList.add(t);
             }
             else if(t.name.toLowerCase().contains(multiSearch)){
+                searchTrackList.add(t);
+            }
+            else if (t.regional.toLowerCase().contains(multiSearch)){
                 searchTrackList.add(t);
             }
             else{
@@ -155,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
         InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE); imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
-    public void MainPageMultiSearchClearClicked() {
+    public void MainPageMultiSearchClearClicked(View view) {
 
         multiSearchEditText.setText("");
         ListView mainListView = findViewById(R.id.mainListView);

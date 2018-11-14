@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">SpaendHjelmen</string>
+
+    <string name="app_info">Spænd Hjelmen er en app til alle der søger udfordringer til mountainbike uanset alder og niveau. Appen er udviklet til at finde de mountainbike ruter som er registreret i danmark. Det er muligt at søge på ruter, sværhedsgrad, længde mm. Hvis en rute tiltaler dig klikkes denne rute og der kommer endnu mere information omkring den pågældende rute. Det er muligt at bruge applikationen uden login, dog giver et login adgang til funktioner såsom: kommentering til ruter, sms funktionalitet under alvorlige styrt og rating af ruter.
+Så spænd hjelmen og kom ud at cykle mountainbike!
+</string>
+    <string name="rapporter_fejl"> <u>Rapporter fejl</u></string>
+    <string name="feedback"> <u>Bedøm</u></string>
+    <string name="email">Email: bamdevteam@gmail.com</string>
 </resources>
