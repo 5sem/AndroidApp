@@ -109,6 +109,9 @@ private final String TAG = "SpecificTrack";
         specific_track_difficulty = findViewById(R.id.specific_track_difficulty);
         specific_track_difficulty.setText(colorCodeConverter(track.colorCode));
 
+        specific_track_addr = findViewById(R.id.specific_track_addr);
+        specific_track_addr.setText(track.address + " " + track.city + " " + track.postalcode);
+
         //imgview = findViewById(R.id.specific_track_image);
         //imgview.setImageResource(R.drawable.underconstruction);
 
