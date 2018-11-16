@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -52,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.CommentAdapter;
@@ -64,7 +67,8 @@ import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.UserComment;
 public class SpecificTrack extends AppCompatActivity {
     private Track track;
     private UserComment userComment;
-    public static final ArrayList<Picture> pictureList = new ArrayList<>();
+    public ArrayList<Picture> pictureList = new ArrayList<>();
+    public ArrayList<Drawable> pictureListdrawable = new ArrayList<>();
     private final ArrayList<UserComment> commentList = new ArrayList<>();
     private TextView
             specific_track_information,
@@ -124,13 +128,7 @@ private final String TAG = "SpecificTrack";
         //imgview = findViewById(R.id.specific_track_image);
         //imgview.setImageResource(R.drawable.underconstruction);
 
-        viewPager = findViewById(R.id.viewPagerSpecific);
 
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this);
-        viewPager.setAdapter(viewPagerAdapter);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
-        tabLayout.setupWithViewPager(viewPager, true);
     }
 
     //henter informationer fra rest service
@@ -141,8 +139,10 @@ private final String TAG = "SpecificTrack";
         commentList.clear();
         ReadTask task = new ReadTask();
         task.execute("https://spaendhjelmenrest.azurewebsites.net/service1.svc/comments/" + track.getId());
+        pictureList.clear();
         ReadTaskPicture taskpicture = new ReadTaskPicture();
         taskpicture.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/pictures/" + track.getId());
+
 
     }
 
@@ -511,7 +511,17 @@ private final String TAG = "SpecificTrack";
 
                     Picture Pictures = new Picture(id, name, image, trackid);
                     pictureList.add(Pictures);
+                    Drawable imagedrawble = new BitmapDrawable(getResources(),BitmapFactory.decodeByteArray(image, 0, image.length));
+                    pictureListdrawable.add(imagedrawble);
                 }
+
+                viewPager = findViewById(R.id.viewPagerSpecific);
+
+                ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(SpecificTrack.this,pictureListdrawable);
+                viewPager.setAdapter(viewPagerAdapter);
+
+                TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
+                tabLayout.setupWithViewPager(viewPager, true);
 
 
             } catch (JSONException ex) {
