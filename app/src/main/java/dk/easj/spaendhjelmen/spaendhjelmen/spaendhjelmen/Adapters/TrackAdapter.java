@@ -60,6 +60,8 @@ public class TrackAdapter extends BaseAdapter {
             imageView.setImageResource(R.drawable.fyn);
         }else if(track.regional.equals("Jylland")){
             imageView.setImageResource(R.drawable.jylland);
+        }else if(track.regional.equals("Bornholm")){
+            imageView.setImageResource(R.drawable.bornholm);
         }
 
 

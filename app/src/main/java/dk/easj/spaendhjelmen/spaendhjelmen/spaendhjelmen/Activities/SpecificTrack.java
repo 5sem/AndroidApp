@@ -532,11 +532,9 @@ private final String TAG = "SpecificTrack";
                 TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
                 tabLayout.setupWithViewPager(viewPager, true);
 
-
             } catch (JSONException ex) {
                 Log.e("SPECIFICACTIVITY", ex.getMessage());
             }
-
         }
 
         @Override
