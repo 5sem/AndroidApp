@@ -34,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +67,7 @@ import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Http.ReadHttpTask;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Picture;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Track;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.UserComment;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Task.GetRatingTask;
 
 public class SpecificTrack extends AppCompatActivity {
     private Track track;
@@ -86,6 +88,7 @@ public class SpecificTrack extends AppCompatActivity {
 
     private ViewPager viewPager;
     private ProgressBar pgb;
+    public RatingBar ratingBar;
 
 private final String TAG = "SpecificTrack";
 
@@ -97,6 +100,7 @@ private final String TAG = "SpecificTrack";
         Intent intent = getIntent();
         track = (Track) intent.getSerializableExtra("Track");
 
+        ratingBar = findViewById(R.id.Specific_rute_rating);
 
         //appbar
         setTitle(track.name);
@@ -147,6 +151,8 @@ private final String TAG = "SpecificTrack";
         ReadTaskPicture taskpicture = new ReadTaskPicture();
         taskpicture.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/pictures/" + track.getId());
 
+        GetRatingTask getRatingTask = new GetRatingTask(this);
+       getRatingTask.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/Rating/" + track.getId());
 
     }
 

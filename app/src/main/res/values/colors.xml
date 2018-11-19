@@ -7,4 +7,6 @@
     <color name="white">#FFFFFF</color>
     <color name="hvidsmoke">#f5f5f5</color>
 
+    <color name="duskYellow">#f5d8ac</color>
+    <color name="lightGrey">#ecb562</color>
 </resources>

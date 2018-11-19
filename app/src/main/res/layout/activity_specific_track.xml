@@ -27,12 +27,29 @@ android:layout_height="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Rute Rating: ⋆⋆⋆⋆⋆"
-                android:textSize="20dp" />
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rute Rating:"
+                    android:textSize="20dp" />
+
+                <RatingBar
+                    android:id="@+id/Specific_rute_rating"
+                    android:stepSize="1"
+                    android:layout_gravity="center"
+                    android:numStars="5"
+                    android:rating="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/RatingBar"
+                    />
+            </LinearLayout>
+
 
             <ProgressBar
                 android:id="@+id/specific_track_progressbar"
@@ -57,6 +74,7 @@ android:layout_height="match_parent"
                 app:tabGravity="center"
                 app:tabIndicatorHeight="0dp"/>
             <TextView
+                android:visibility="invisible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Personal Rating: ⋆⋆⋆⋆⋆"
