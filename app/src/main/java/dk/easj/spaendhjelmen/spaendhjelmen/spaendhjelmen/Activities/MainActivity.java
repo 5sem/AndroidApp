@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onCancelled(CharSequence message) {
-            Toast.makeText(MainActivity.this, "Fejl:" + message.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Fejl:" + message.toString(), Toast.LENGTH_LONG).show();
             Log.e("MAINACTIVITY", message.toString());
         }
     }

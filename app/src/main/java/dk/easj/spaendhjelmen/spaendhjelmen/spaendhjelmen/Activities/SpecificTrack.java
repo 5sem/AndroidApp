@@ -22,15 +22,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,7 +84,8 @@ public class SpecificTrack extends AppCompatActivity {
             specific_track_addr;
     private ImageView imgview;
 
-private ViewPager viewPager;
+    private ViewPager viewPager;
+    private ProgressBar pgb;
 
 private final String TAG = "SpecificTrack";
 
@@ -125,8 +129,7 @@ private final String TAG = "SpecificTrack";
         specific_track_addr = findViewById(R.id.specific_track_addr);
         specific_track_addr.setText(track.address + " " + track.city + " " + track.postalcode);
 
-        //imgview = findViewById(R.id.specific_track_image);
-        //imgview.setImageResource(R.drawable.underconstruction);
+        pgb = findViewById(R.id.specific_track_progressbar);
 
 
     }
@@ -140,6 +143,7 @@ private final String TAG = "SpecificTrack";
         ReadTask task = new ReadTask();
         task.execute("https://spaendhjelmenrest.azurewebsites.net/service1.svc/comments/" + track.getId());
         pictureList.clear();
+        pictureListdrawable.clear();
         ReadTaskPicture taskpicture = new ReadTaskPicture();
         taskpicture.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/pictures/" + track.getId());
 
@@ -515,7 +519,12 @@ private final String TAG = "SpecificTrack";
                     pictureListdrawable.add(imagedrawble);
                 }
 
+                pgb.setVisibility(View.GONE);
                 viewPager = findViewById(R.id.viewPagerSpecific);
+                ViewGroup.LayoutParams param = viewPager.getLayoutParams();
+
+                param.height = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 250, getResources().getDisplayMetrics()));
+                viewPager.setLayoutParams(param);
 
                 ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(SpecificTrack.this,pictureListdrawable);
                 viewPager.setAdapter(viewPagerAdapter);
