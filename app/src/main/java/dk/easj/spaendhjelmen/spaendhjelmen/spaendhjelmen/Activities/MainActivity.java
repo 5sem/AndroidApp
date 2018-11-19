@@ -11,7 +11,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -25,8 +24,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -34,16 +39,17 @@ import dk.easj.spaendhjelmen.spaendhjelmen.R;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.TrackAdapter;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Http.ReadHttpTask;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Track;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Task.CheckLists;
 
 public class MainActivity extends AppCompatActivity {
-    private final ArrayList<Track> trackList = new ArrayList<>();
+    public static ArrayList<Track> trackList = new ArrayList<>();
     private final ArrayList<Track> searchTrackList = new ArrayList<>();
-    private  EditText multiSearchEditText;
+    private EditText multiSearchEditText;
     private ImageButton DeleteBtn;
     private final String TAG = "MainActiviy";
     private ProgressBar pgb;
+    public final String FILE_NAME = "Liste.txt";
+    private ListView mainListView;
 
 
     @Override
@@ -57,13 +63,13 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         setTitle("");
 
-        multiSearchEditText.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+        multiSearchEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onFocusChange(View arg0, boolean hasfocus){
-                if (hasfocus){
+            public void onFocusChange(View arg0, boolean hasfocus) {
+                if (hasfocus) {
                     Log.d(TAG, "has focus");
                     DeleteBtn.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     Log.d(TAG, "not focus");
                     DeleteBtn.setVisibility(View.INVISIBLE);
                 }
@@ -72,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
         multiSearchEditText.setOnEditorActionListener(searchListener);
         multiSearchEditText.clearFocus();
+        mainListView = findViewById(R.id.mainListView);
     }
 
     private TextView.OnEditorActionListener searchListener = new TextView.OnEditorActionListener() {
@@ -89,8 +96,16 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         Log.d("START", "onStart: ");
         trackList.clear();
-        ReadTask task = new ReadTask();
-        task.execute("https://spaendhjelmenrest.azurewebsites.net/service1.svc/tracks");
+
+        if (fileExists(this, FILE_NAME)) {
+            HentFraFil();
+            CheckLists checkLists = new CheckLists(MainActivity.this, mainListView);
+            checkLists.execute("https://spaendhjelmenrest.azurewebsites.net/service1.svc/tracks");
+        }
+        if (!fileExists(this, FILE_NAME)) {
+            ReadTask task = new ReadTask();
+            task.execute("https://spaendhjelmenrest.azurewebsites.net/service1.svc/tracks");
+        }
     }
 
     //inflater meny
@@ -112,9 +127,8 @@ public class MainActivity extends AppCompatActivity {
         searchTrackList.clear();
         String multiSearch = multiSearchEditText.getText().toString().toLowerCase();
 
-        for (Track t : trackList){
-            if (multiSearch.equals("rød") || multiSearch.equals("grøn") || multiSearch.equals("sort") || multiSearch.equals("blå"))
-            {
+        for (Track t : trackList) {
+            if (multiSearch.equals("rød") || multiSearch.equals("grøn") || multiSearch.equals("sort") || multiSearch.equals("blå")) {
                 if (multiSearch.equals("rød")) {
 
                     if (t.colorCode.contains("red"))
@@ -136,17 +150,13 @@ public class MainActivity extends AppCompatActivity {
                         searchTrackList.add(t);
 
                 }
-            }
-            else if (t.city.toLowerCase().contains(multiSearch)){
-                    searchTrackList.add(t);
-            }
-            else if(t.name.toLowerCase().contains(multiSearch)){
+            } else if (t.city.toLowerCase().contains(multiSearch)) {
                 searchTrackList.add(t);
-            }
-            else if (t.regional.toLowerCase().contains(multiSearch)){
+            } else if (t.name.toLowerCase().contains(multiSearch)) {
                 searchTrackList.add(t);
-            }
-            else{
+            } else if (t.regional.toLowerCase().contains(multiSearch)) {
+                searchTrackList.add(t);
+            } else {
 
             }
         }
@@ -164,7 +174,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE); imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
     public void MainPageMultiSearchClearClicked(View view) {
@@ -185,13 +196,128 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    //region File, save read sammenlign
+
+
+    public void SaveContent(String content) {
+        FileOutputStream fos = null;
+        try {
+            fos = openFileOutput(FILE_NAME, MODE_PRIVATE);
+            fos.write(content.getBytes());
+            Toast.makeText(this, "saved to: " + getFilesDir() + "/" + FILE_NAME, Toast.LENGTH_LONG).show();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        Log.d(TAG, "SaveContent: done");
+    }
+
+    public String ReadContent() {
+        FileInputStream fis = null;
+        String Rtn = "";
+        try {
+            fis = openFileInput(FILE_NAME);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String content;
+
+            while ((content = br.readLine()) != null) {
+                sb.append(content);
+            }
+            Rtn = sb.toString();
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return Rtn;
+    }
+
+    public boolean fileExists(Context context, String filename) {
+        File file = context.getFileStreamPath(filename);
+        if (file == null || !file.exists()) {
+            return false;
+        }
+        return true;
+    }
+
+    //to objs
+    private void HentFraFil() {
+
+        String jsonString = ReadContent();
+
+        try {
+
+            JSONArray array = new JSONArray(jsonString);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
+                int id = obj.getInt("Id");
+                int pictureid = obj.getInt("PictureId");
+                String name = obj.getString("Name");
+                String info = obj.getString("Info");
+                double longitude = obj.getDouble("Longitude");
+                double latitude = obj.getDouble("Latitude");
+                String address = obj.getString("Address");
+                String colorcode = obj.getString("ColorCode");
+                double length = obj.getDouble("Length");
+                double maxheight = obj.getDouble("MaxHeight");
+                String parkinfo = obj.getString("ParkInfo");
+                String regional = obj.getString("Regional");
+                int postalcode = obj.getInt("PostalCode");
+                String city = obj.getString("City");
+
+                Track track = new Track(id, pictureid, name, info, longitude, latitude, address, colorcode, length, maxheight, parkinfo, regional, postalcode, city);
+                trackList.add(track);
+            }
+            ListView mainListView = findViewById(R.id.mainListView);
+            mainListView.setAdapter(new TrackAdapter(MainActivity.this, trackList));
+            mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                    Intent intent = new Intent(getBaseContext(), SpecificTrack.class);
+                    Track track = trackList.get(position);
+                    intent.putExtra("Track", track);
+
+                    startActivity(intent);
+                }
+            });
+
+        } catch (JSONException ex) {
+            Log.e("MAINACTIVITY", ex.getMessage());
+        }
+
+    }
+
+
+    //endregion
+
     public void sorterDifficulty(MenuItem item) {
         Log.d(TAG, "sorterDifficulty: start");
         ArrayList<Track> _list = trackList;
         if (!searchTrackList.isEmpty()) _list = searchTrackList;
 
         Log.d(TAG, "sorterDifficulty: efter if");
-        Collections.sort(_list,new  ColourComparator());
+        Collections.sort(_list, new ColourComparator());
         Log.d(TAG, "sorterDifficulty: efter sort");
         ListView mainListView = findViewById(R.id.mainListView);
         mainListView.setAdapter(new TrackAdapter(MainActivity.this, _list));
@@ -199,8 +325,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public class ColourComparator implements Comparator<Track>
-    {
+    public class ColourComparator implements Comparator<Track> {
         public int compare(Track left, Track right) {
             return left.colorCode.compareTo(right.colorCode);
         }
@@ -210,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
 
     //region ReadTask Class
 
-    private class ReadTask extends ReadHttpTask {
+    public class ReadTask extends ReadHttpTask {
         @Override
         protected void onPostExecute(CharSequence jsonString) {
             try {
@@ -233,11 +358,11 @@ public class MainActivity extends AppCompatActivity {
                     int postalcode = obj.getInt("PostalCode");
                     String city = obj.getString("City");
 
-                    Track track = new Track(id,pictureid,name,info,longitude, latitude,address,colorcode,length,maxheight,parkinfo,regional,postalcode,city);
+                    Track track = new Track(id, pictureid, name, info, longitude, latitude, address, colorcode, length, maxheight, parkinfo, regional, postalcode, city);
                     trackList.add(track);
                 }
                 ListView mainListView = findViewById(R.id.mainListView);
-
+                SaveContent(jsonString.toString());
                 mainListView.setAdapter(new TrackAdapter(MainActivity.this, trackList));
                 mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
