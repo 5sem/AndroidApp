@@ -19,10 +19,10 @@
         app:showAsAction="never" />
 
     <item
+        android:onClick="menuMainSortByLengthClicked"
         android:id="@+id/action_absolutely_nothing2"
-        android:icon="@mipmap/ic_launcher_round"
         android:orderInCategory="3"
-        android:title="Sorter3"
+        android:title="Sorter efter længde"
         app:showAsAction="never" />
 
     <item
@@ -30,7 +30,8 @@
         android:icon="@mipmap/ic_launcher_round"
         android:orderInCategory="4"
         android:title="Indstillinger"
-        app:showAsAction="never" />
+        app:showAsAction="never"/>
+
 
     <item
         android:id="@+id/menu_om"
