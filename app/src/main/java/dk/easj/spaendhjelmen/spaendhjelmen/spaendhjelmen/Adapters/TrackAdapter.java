@@ -53,6 +53,7 @@ public class TrackAdapter extends BaseAdapter {
         TextView txtRegional = (TextView) convertView.findViewById(R.id.txtRegional);
 
         txtColorcode.setBackgroundColor(Color.parseColor(track.colorCode));
+
         if (track.regional.equals("Sjælland")){
             imageView.setImageResource(R.drawable.sjaelland);
         } else if(track.regional.equals("Fyn")) {
