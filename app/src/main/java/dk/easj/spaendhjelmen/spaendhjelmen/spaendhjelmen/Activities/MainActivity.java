@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar pgb;
     public final String FILE_NAME = "Liste.txt";
     private ListView mainListView;
+    private boolean sortByLenghtPressed;
 
 
     @Override
@@ -321,7 +322,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "sorterDifficulty: efter sort");
         ListView mainListView = findViewById(R.id.mainListView);
         mainListView.setAdapter(new TrackAdapter(MainActivity.this, _list));
-
     }
 
 
@@ -329,6 +329,30 @@ public class MainActivity extends AppCompatActivity {
         public int compare(Track left, Track right) {
             return left.colorCode.compareTo(right.colorCode);
         }
+    }
+
+    public void menuMainSortByLengthClicked(MenuItem item) {
+        ArrayList<Track> tracks = trackList;
+
+        if (sortByLenghtPressed == false) {
+            Collections.sort(tracks, new Comparator<Track>() {
+                public int compare(Track t1, Track t2) {
+                    return Double.compare(t1.Getlength(), t2.Getlength());
+                }
+            });
+            sortByLenghtPressed = true;
+        }
+        else{
+            Collections.sort(tracks, new Comparator<Track>() {
+                public int compare(Track t1, Track t2) {
+                    return Double.compare(t2.Getlength(), t1.Getlength());
+                }
+            });
+            sortByLenghtPressed = false;
+        }
+
+        ListView mainListView = findViewById(R.id.mainListView);
+        mainListView.setAdapter(new TrackAdapter(this, tracks));
     }
 
     //endregion
