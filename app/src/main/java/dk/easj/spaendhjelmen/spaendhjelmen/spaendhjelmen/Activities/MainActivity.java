@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar pgb;
     public final String FILE_NAME = "Liste.txt";
     private ListView mainListView;
+    private boolean sortByLenghtPressed;
 
 
     @Override
@@ -169,7 +170,6 @@ public class MainActivity extends AppCompatActivity {
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
-
     public void MainPageMultiSearchClearClicked(View view) {
 
         multiSearchEditText.setText("");
@@ -185,8 +185,6 @@ public class MainActivity extends AppCompatActivity {
 
         mainListView.setAdapter(new TrackAdapter(MainActivity.this, trackList));
     }
-    //endregion
-
 
     //region File, save read sammenlign
 
@@ -346,6 +344,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void menuMainSortByLengthClicked(MenuItem item) {
+        ArrayList<Track> tracks = trackList;
+
+        if (sortByLenghtPressed == false) {
+            Collections.sort(tracks, new Comparator<Track>() {
+                public int compare(Track t1, Track t2) {
+                    return Double.compare(t1.Getlength(), t2.Getlength());
+                }
+            });
+            sortByLenghtPressed = true;
+        }
+        else{
+            Collections.sort(tracks, new Comparator<Track>() {
+                public int compare(Track t1, Track t2) {
+                    return Double.compare(t2.Getlength(), t1.Getlength());
+                }
+            });
+            sortByLenghtPressed = false;
+        }
+
+        ListView mainListView = findViewById(R.id.mainListView);
+        mainListView.setAdapter(new TrackAdapter(this, tracks));
+    }
+
+    //endregion
 
     //region ReadTask Class
 
