@@ -22,7 +22,7 @@
             android:imeOptions="actionSearch"
             android:textStyle="bold" />
         <ImageButton
-            android:visibility="invisible"
+            android:visibility="gone"
             android:id="@+id/toolbarmain_ImageBtnDelete"
             android:layout_weight="0.5"
             android:layout_width="wrap_content"

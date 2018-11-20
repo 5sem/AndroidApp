@@ -6,7 +6,7 @@
         android:id="@+id/action_nothing_really"
         android:icon="@mipmap/ic_launcher_round"
         android:orderInCategory="1"
-        android:title="sorter på SVÆR"
+        android:title="Gruppér efter farve"
         android:onClick="sorterDifficulty"
         app:showAsAction="never"
         />
@@ -15,7 +15,8 @@
         android:id="@+id/action_absolutely_nothing"
         android:icon="@mipmap/ic_launcher_round"
         android:orderInCategory="2"
-        android:title="Sorter2"
+        android:title="Sorter efter navn"
+        android:onClick="sorterPlace"
         app:showAsAction="never" />
 
     <item

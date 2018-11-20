@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.util.SortedList;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -42,7 +44,7 @@ import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Track;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Task.CheckLists;
 
 public class MainActivity extends AppCompatActivity {
-    public static ArrayList<Track> trackList = new ArrayList<>();
+    public static final ArrayList<Track> trackList = new ArrayList<>();
     private final ArrayList<Track> searchTrackList = new ArrayList<>();
     private EditText multiSearchEditText;
     private ImageButton DeleteBtn;
@@ -160,41 +162,31 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
-        ListView mainListView = findViewById(R.id.mainListView);
 
         mainListView.setAdapter(new TrackAdapter(MainActivity.this, searchTrackList));
         pgb.setVisibility(View.GONE);
-        mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent = new Intent(getBaseContext(), SpecificTrack.class);
-                Track track = searchTrackList.get(position);
-                intent.putExtra("Track", track);
-                startActivity(intent);
-
-            }
-        });
         InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
+
     public void MainPageMultiSearchClearClicked(View view) {
 
         multiSearchEditText.setText("");
-        ListView mainListView = findViewById(R.id.mainListView);
+        searchTrackList.clear();
 
-        mainListView.setAdapter(new TrackAdapter(MainActivity.this, trackList));
-        mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent = new Intent(getBaseContext(), SpecificTrack.class);
-                Track track = trackList.get(position);
-                intent.putExtra("Track", track);
-                startActivity(intent);
-
+        ImageButton img = findViewById(R.id.toolbarmain_ImageBtnDelete);
+        img.setVisibility(View.GONE);
+        Collections.sort(trackList, new Comparator< Track>() {
+            @Override public int compare(Track p1, Track p2) {
+                return p1.getId()- p2.getId();
             }
         });
+
+        mainListView.setAdapter(new TrackAdapter(MainActivity.this, trackList));
     }
+    //endregion
+
 
     //region File, save read sammenlign
 
@@ -319,8 +311,31 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "sorterDifficulty: efter if");
         Collections.sort(_list, new ColourComparator());
         Log.d(TAG, "sorterDifficulty: efter sort");
-        ListView mainListView = findViewById(R.id.mainListView);
+
         mainListView.setAdapter(new TrackAdapter(MainActivity.this, _list));
+
+        ImageButton img = findViewById(R.id.toolbarmain_ImageBtnDelete);
+        img.setVisibility(View.VISIBLE);
+
+    }
+
+    public void sorterPlace(MenuItem item) {
+        Log.d(TAG, "sorterPlace: start");
+        ArrayList<Track> _list = trackList;
+        if (!searchTrackList.isEmpty()) _list = searchTrackList;
+
+        if (_list.size() >0){
+            Collections.sort(_list, new Comparator<Track>() {
+                @Override
+                public int compare(final Track o1,final Track o2) {
+                    return o1.Getname().compareTo(o2.Getname());
+                }
+            });
+        }
+        mainListView.setAdapter(new TrackAdapter(MainActivity.this, _list));
+
+        ImageButton img = findViewById(R.id.toolbarmain_ImageBtnDelete);
+        img.setVisibility(View.VISIBLE);
 
     }
 
@@ -331,7 +346,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //endregion
 
     //region ReadTask Class
 
