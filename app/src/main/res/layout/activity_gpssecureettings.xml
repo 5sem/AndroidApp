@@ -4,25 +4,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_gravity="center"
-        android:text="Vælg profil"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <Spinner
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </Spinner>
-
+    <include
+        android:id="@+id/toolbartrack"
+        layout="@layout/toolbar_track"
+        />
 
     <TextView
         android:layout_marginTop="50dp"
         android:layout_gravity="center"
-        android:text="Distance"
+        android:text="Distance i meter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <Spinner
+        android:id="@+id/gpssecuresettings_Distance"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
@@ -36,6 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <Spinner
+        android:id="@+id/gpssecuresettings_Tid"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
@@ -49,15 +44,18 @@
         android:text="Kontakt person telefon nummer"
         android:layout_gravity="center"
         />
-<EditText
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-android:hint="Telefon nummer...."
-    />
+
+    <EditText
+        android:id="@+id/gpssecuresettings_TelefonNummer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:hint="Telefon nummer...."
+        android:inputType="phone" />
 
 
     <Button
+        android:onClick="gpssecuresettingsgemClicked"
         android:layout_marginTop="20dp"
         android:text="Gem"
         style="@style/Widget.AppCompat.Button.Colored"

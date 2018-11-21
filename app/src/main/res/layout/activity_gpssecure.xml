@@ -5,7 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/gpssecure">
+    android:background="@drawable/gpssecure"
+
+    >
+
+    <include
+        android:id="@+id/toolbartrack"
+        layout="@layout/toolbar_track"
+        />
 
     <Button
         android:onClick="gpsSecureTændSlukClicked"
@@ -28,5 +35,6 @@
         android:layout_gravity="center"
         style="@style/Widget.AppCompat.Button.Colored"
         />
+
 
 </LinearLayout>

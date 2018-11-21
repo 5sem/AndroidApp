@@ -3,7 +3,9 @@
     package="dk.easj.spaendhjelmen.spaendhjelmen">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.SEND_SMS"></uses-permission>
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:name=".spaendhjelmen.Activities.App"
@@ -24,6 +26,9 @@
         <activity android:name=".spaendhjelmen.Activities.SpecificTrack" android:screenOrientation="portrait"></activity>
         <activity android:name=".spaendhjelmen.Activities.AboutActivity" android:screenOrientation="portrait"></activity>
         <activity android:name=".spaendhjelmen.Activities.GPSSecureActivity" android:screenOrientation="portrait"></activity>
-    </application>
+        <activity android:name=".spaendhjelmen.Activities.GPSSecureSettingsActivity" android:screenOrientation="portrait"></activity>
 
+        <service android:name=".spaendhjelmen.Task.GeofenceService" android:exported="true" android:enabled="true"/>
+
+    </application>
 </manifest>
