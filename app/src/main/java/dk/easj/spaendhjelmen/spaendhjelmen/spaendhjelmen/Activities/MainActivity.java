@@ -345,7 +345,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void menuMainSortByLengthClicked(MenuItem item) {
-        ArrayList<Track> tracks = trackList;
+        ArrayList<Track> tracks = searchTrackList;
 
         if (sortByLenghtPressed == false) {
             Collections.sort(tracks, new Comparator<Track>() {
@@ -353,6 +353,8 @@ public class MainActivity extends AppCompatActivity {
                     return Double.compare(t1.Getlength(), t2.Getlength());
                 }
             });
+            ImageButton img = findViewById(R.id.toolbarmain_ImageBtnDelete);
+            img.setVisibility(View.VISIBLE);
             sortByLenghtPressed = true;
         }
         else{
@@ -361,6 +363,8 @@ public class MainActivity extends AppCompatActivity {
                     return Double.compare(t2.Getlength(), t1.Getlength());
                 }
             });
+            ImageButton img = findViewById(R.id.toolbarmain_ImageBtnDelete);
+            img.setVisibility(View.VISIBLE);
             sortByLenghtPressed = false;
         }
 
