@@ -120,8 +120,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void Menu_Om_Onclick(MenuItem item) {
-        Intent intent = new Intent(this, AboutActivity.class);
-        startActivity(intent);
+            Intent intent = new Intent(this, AboutActivity.class);
+            startActivity(intent);
     }
 
     //region Multi serach
@@ -335,6 +335,11 @@ public class MainActivity extends AppCompatActivity {
         ImageButton img = findViewById(R.id.toolbarmain_ImageBtnDelete);
         img.setVisibility(View.VISIBLE);
 
+    }
+
+    public void menu_gpssecureClicked(MenuItem item) {
+        Intent intent = new Intent(this, GPSSecureActivity.class);
+        startActivity(intent);
     }
 
 
