@@ -3,6 +3,7 @@
     package="dk.easj.spaendhjelmen.spaendhjelmen">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SEND_SMS"></uses-permission>
 
     <application
         android:name=".spaendhjelmen.Activities.App"
