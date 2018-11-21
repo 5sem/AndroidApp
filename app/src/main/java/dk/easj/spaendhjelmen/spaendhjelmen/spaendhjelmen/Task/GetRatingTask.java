@@ -1,6 +1,7 @@
 package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Task;
 
 import android.os.AsyncTask;
+import android.view.View;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,9 +17,13 @@ public class GetRatingTask extends AsyncTask<String,Integer,Integer> {
 
 private WeakReference<SpecificTrack> activityWeakReference;
 
+
+
     public GetRatingTask(SpecificTrack activity) {
         activityWeakReference = new WeakReference<>(activity);
     }
+
+
 
     @Override
     protected Integer doInBackground(String... strings) {
@@ -51,6 +56,7 @@ private WeakReference<SpecificTrack> activityWeakReference;
     @Override
     protected void onPostExecute(Integer s) {
         SpecificTrack activity = activityWeakReference.get();
+        activity.ratingBar.setVisibility(View.VISIBLE);
         if (s.equals(null)) activity.ratingBar.setRating(0);
         else activity.ratingBar.setRating(s);
     }

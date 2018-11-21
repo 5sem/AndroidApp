@@ -8,16 +8,25 @@
     android:background="@drawable/gpssecure">
 
     <Button
-        android:id="@+id/button2"
+        android:onClick="gpsSecureTændSlukClicked"
+        android:layout_margin="20dp"
+        android:id="@+id/gpsSecureTændSluk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Tænd / Sluk"
         android:layout_gravity="center"
+        style="@style/Widget.AppCompat.Button.Colored"
         />
+
     <Button
+        android:onClick="gpsSecureIndstillingerClicked"
+        android:id="@+id/gpsSecureIndstillinger"
+        android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Indstillinger"
         android:layout_gravity="center"
+        style="@style/Widget.AppCompat.Button.Colored"
         />
+
 </LinearLayout>

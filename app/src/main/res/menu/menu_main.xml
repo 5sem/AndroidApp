@@ -35,19 +35,27 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menu_GPSSecure"
+        android:orderInCategory="5"
+        android:title="GPS Secure"
+        android:onClick="menu_gpssecureClicked"
+    />
+    <item
         android:id="@+id/menu_om"
         android:icon="@mipmap/ic_launcher_round"
-        android:orderInCategory="5"
+        android:orderInCategory="6"
         android:title="Om"
         android:onClick="Menu_Om_Onclick"
         app:showAsAction="never"/>
 
+
     <item
         android:id="@+id/menu_logud"
         android:icon="@drawable/ic_exit_to_app_black_24dp"
-        android:orderInCategory="6"
+        android:orderInCategory="7"
         android:title="Logud"
         app:showAsAction="withText"
         />
+
 
 </menu>

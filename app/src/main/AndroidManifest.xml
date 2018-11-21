@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".spaendhjelmen.Activities.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_logo"
         android:label="@string/app_name"
@@ -21,6 +22,7 @@
         <activity android:name=".spaendhjelmen.Activities.LoginActivity" android:screenOrientation="portrait"></activity>
         <activity android:name=".spaendhjelmen.Activities.SpecificTrack" android:screenOrientation="portrait"></activity>
         <activity android:name=".spaendhjelmen.Activities.AboutActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".spaendhjelmen.Activities.GPSSecureActivity" android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
