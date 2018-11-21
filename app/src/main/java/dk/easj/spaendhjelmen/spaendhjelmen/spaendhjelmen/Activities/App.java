@@ -21,8 +21,9 @@ public class App extends Application {
             NotificationChannel notificationChannel = new NotificationChannel(channel_Alert, "Alert", NotificationManager.IMPORTANCE_HIGH);
             notificationChannel.setDescription("SpændHjelmen GPSSecure notifikation");
 
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(notificationChannel);
         }
-
     }
 
 
