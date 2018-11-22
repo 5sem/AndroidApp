@@ -69,7 +69,7 @@ public class GPSSecureActivity extends AppCompatActivity {
     private static final String TAG = "GPSSecureActivity";
     private static final String GEOFENCE_ID = "GEO";
 
-    GoogleApiClient googleApiClient = null;
+   public static GoogleApiClient googleApiClient = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -158,7 +158,7 @@ public class GPSSecureActivity extends AppCompatActivity {
                     locationRequest, new LocationListener() {
                         @Override
                         public void onLocationChanged(Location location) {
-                            Log.d(TAG, "Location update lat/long " + location.getLatitude() + " " + location.getLongitude());
+                            Log.d("GeofenceString", "Location update lat/long " + location.getLatitude() + " " + location.getLongitude());
                         }
                     });
         } catch (SecurityException e) {
