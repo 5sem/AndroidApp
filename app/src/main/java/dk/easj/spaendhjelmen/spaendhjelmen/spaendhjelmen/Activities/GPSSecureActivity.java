@@ -1,25 +1,35 @@
 package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -48,6 +58,7 @@ import dk.easj.spaendhjelmen.spaendhjelmen.R;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.GPSSecureSettings;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Task.GeofenceService;
 
+import static android.provider.Settings.ACTION_SECURITY_SETTINGS;
 import static dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities.App.channel_Alert;
 
 public class GPSSecureActivity extends AppCompatActivity {
@@ -134,6 +145,8 @@ public class GPSSecureActivity extends AppCompatActivity {
         googleApiClient.disconnect();
     }
 
+
+
     private void startLocationMonitoring() {
         Log.d(TAG, "startLocation called");
         try {
@@ -173,15 +186,69 @@ public class GPSSecureActivity extends AppCompatActivity {
             Log.d(TAG, "GoogleApiClient is not connected");
         } else {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
+                // TODO: husk at se om gps er tændt != tænd gps
+                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
                 return;
             }
+
+            if (getLocationMode(this) != 3){
+                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+                // Set Custom Title
+                TextView title = new TextView(this);
+                // Title Properties
+                title.setText("Gps indstillinger");
+                title.setPadding(10, 10, 10, 10);   // Set Position
+                title.setGravity(Gravity.CENTER);
+                title.setTextColor(Color.BLACK);
+                title.setTextSize(20);
+                alertDialog.setCustomTitle(title);
+
+                // Set Message
+                final TextView msg = new TextView(this);
+                // Message Properties
+                msg.setGravity(Gravity.CENTER_HORIZONTAL);
+                msg.setTextColor(Color.BLACK);
+                msg.setText("1. Tryk på 'Placerings metode'\n" +
+                        "2. Vælg 'Stor nøjagtighed'");
+                alertDialog.setView(msg);
+
+                // Set Button
+                // you can more buttons
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"Fortsæt", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Perform Action on Button YES btn
+                        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                });
+
+                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"Tilbage", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Perform Action on Button
+                    }
+                });
+
+                new Dialog(getApplicationContext());
+                alertDialog.show();
+
+                // Set Properties for OK Button
+                final Button okBT = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+                LinearLayout.LayoutParams neutralBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
+                neutralBtnLP.gravity = Gravity.FILL_HORIZONTAL;
+                okBT.setPadding(50, 10, 10, 10);   // Set Position
+                okBT.setTextColor(getResources().getColor(R.color.colorGreen));
+                okBT.setLayoutParams(neutralBtnLP);
+                okBT.setText("Fortsæt");
+
+                final Button cancelBT = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                LinearLayout.LayoutParams negBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
+                negBtnLP.gravity = Gravity.FILL_HORIZONTAL;
+                cancelBT.setTextColor(Color.RED);
+                cancelBT.setLayoutParams(negBtnLP);
+                cancelBT.setText("Tilbage");
+
+            }
+
             LocationServices.GeofencingApi.addGeofences(googleApiClient, geofencingRequest, pendingIntent)
                     .setResultCallback(new ResultCallback<Status>() {
                         @Override
@@ -195,6 +262,18 @@ public class GPSSecureActivity extends AppCompatActivity {
                     });
         }
     }
+
+    public int getLocationMode(Context context)
+    {
+        try {
+            Log.d(TAG, "getLocationMode: " + Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE));
+            return Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+        return Integer.parseInt(null);
+    }
+
 
     private void stopGeofenceMonitoring(){
         Log.d(TAG, "stopMonitoring called");
