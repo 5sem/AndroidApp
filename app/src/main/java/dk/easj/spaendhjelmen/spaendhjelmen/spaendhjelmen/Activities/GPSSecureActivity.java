@@ -53,10 +53,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.GPSSecureSettings;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Task.GeofenceService;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Task.TimerGeofence;
 
 import static android.provider.Settings.ACTION_SECURITY_SETTINGS;
 import static dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities.App.channel_Alert;
@@ -68,8 +71,9 @@ public class GPSSecureActivity extends AppCompatActivity {
     private final String FILE_NAME = "GPSSecureSettings.txt";
     private static final String TAG = "GPSSecureActivity";
     private static final String GEOFENCE_ID = "GEO";
+    public static Timer startTimer;
 
-   public static GoogleApiClient googleApiClient = null;
+    public static GoogleApiClient googleApiClient = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -146,7 +150,6 @@ public class GPSSecureActivity extends AppCompatActivity {
     }
 
 
-
     private void startLocationMonitoring() {
         Log.d(TAG, "startLocation called");
         try {
@@ -166,12 +169,22 @@ public class GPSSecureActivity extends AppCompatActivity {
         }
     }
 
-    private void startGeofenceMonitoring(double latitude, double longitude, float radius) {
-        Geofence geofence = new Geofence.Builder()
+    private void startGeofenceMonitoring( float radius) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                googleApiClient);
+        if (mLastLocation != null) {
+            double latitude = mLastLocation.getLatitude();
+            double longitude = mLastLocation.getLongitude();
+
+
+            Geofence geofence = new Geofence.Builder()
                 .setRequestId(GEOFENCE_ID)
                 .setCircularRegion(latitude, longitude, radius)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .setNotificationResponsiveness(1)
+                .setNotificationResponsiveness(5)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT)
                 .build();
 
@@ -191,75 +204,19 @@ public class GPSSecureActivity extends AppCompatActivity {
                 return;
             }
 
-            if (getLocationMode(this) != 3){
-                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-
-                // Set Custom Title
-                TextView title = new TextView(this);
-                // Title Properties
-                title.setText("Gps indstillinger");
-                title.setPadding(10, 10, 10, 10);   // Set Position
-                title.setGravity(Gravity.CENTER);
-                title.setTextColor(Color.BLACK);
-                title.setTextSize(20);
-                alertDialog.setCustomTitle(title);
-
-                // Set Message
-                final TextView msg = new TextView(this);
-                // Message Properties
-                msg.setGravity(Gravity.CENTER_HORIZONTAL);
-                msg.setTextColor(Color.BLACK);
-                msg.setText("1. Tryk på 'Placerings metode'\n" +
-                        "2. Vælg 'Stor nøjagtighed'");
-                alertDialog.setView(msg);
-
-                // Set Button
-                // you can more buttons
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"Fortsæt", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Perform Action on Button YES btn
-                        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                    }
-                });
-
-                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"Tilbage", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Perform Action on Button
-                    }
-                });
-
-                new Dialog(getApplicationContext());
-                alertDialog.show();
-
-                // Set Properties for OK Button
-                final Button okBT = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-                LinearLayout.LayoutParams neutralBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
-                neutralBtnLP.gravity = Gravity.FILL_HORIZONTAL;
-                okBT.setPadding(50, 10, 10, 10);   // Set Position
-                okBT.setTextColor(getResources().getColor(R.color.colorGreen));
-                okBT.setLayoutParams(neutralBtnLP);
-                okBT.setText("Fortsæt");
-
-                final Button cancelBT = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                LinearLayout.LayoutParams negBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
-                negBtnLP.gravity = Gravity.FILL_HORIZONTAL;
-                cancelBT.setTextColor(Color.RED);
-                cancelBT.setLayoutParams(negBtnLP);
-                cancelBT.setText("Tilbage");
-
-            }
-
             LocationServices.GeofencingApi.addGeofences(googleApiClient, geofencingRequest, pendingIntent)
                     .setResultCallback(new ResultCallback<Status>() {
                         @Override
                         public void onResult(Status status) {
                             if (status.isSuccess()) {
                                 Log.d(TAG, "Succesfully added geofence");
+                                startTimer.schedule(new TimerGeofence(),0, 6000);
                             } else {
                                 Log.d(TAG, "Failed to add geofence + " + status.getStatus());
                             }
                         }
                     });
+            }
         }
     }
 
@@ -287,10 +244,69 @@ public class GPSSecureActivity extends AppCompatActivity {
         if (!fileExists(this,FILE_NAME)){
             Toast.makeText(this, "Indstillinger ikke konfigureret!", Toast.LENGTH_LONG).show();
         }
+
+        if (getLocationMode(this) != 3){
+            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+            // Set Custom Title
+            TextView title = new TextView(this);
+            // Title Properties
+            title.setText("Gps indstillinger");
+            title.setPadding(10, 10, 10, 10);   // Set Position
+            title.setGravity(Gravity.CENTER);
+            title.setTextColor(Color.BLACK);
+            title.setTextSize(20);
+            alertDialog.setCustomTitle(title);
+
+            // Set Message
+            final TextView msg = new TextView(this);
+            // Message Properties
+            msg.setGravity(Gravity.CENTER_HORIZONTAL);
+            msg.setTextColor(Color.BLACK);
+            msg.setText("1. Tryk på 'Placerings metode'\n" +
+                    "2. Vælg 'Stor nøjagtighed'");
+            alertDialog.setView(msg);
+
+            // Set Button
+            // you can more buttons
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"Fortsæt", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Perform Action on Button YES btn
+                    startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                }
+            });
+
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"Tilbage", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Perform Action on Button
+                }
+            });
+
+            new Dialog(getApplicationContext());
+            alertDialog.show();
+
+            // Set Properties for OK Button
+            final Button okBT = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+            LinearLayout.LayoutParams neutralBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
+            neutralBtnLP.gravity = Gravity.FILL_HORIZONTAL;
+            okBT.setPadding(50, 10, 10, 10);   // Set Position
+            okBT.setTextColor(getResources().getColor(R.color.colorGreen));
+            okBT.setLayoutParams(neutralBtnLP);
+            okBT.setText("Fortsæt");
+
+            final Button cancelBT = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            LinearLayout.LayoutParams negBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
+            negBtnLP.gravity = Gravity.FILL_HORIZONTAL;
+            cancelBT.setTextColor(Color.RED);
+            cancelBT.setLayoutParams(negBtnLP);
+            cancelBT.setText("Tilbage");
+
+        }
+
         else {
             //TODO Geofencing implementeres her
             //Toast.makeText(this, "Geofencing kommer snart!", Toast.LENGTH_SHORT).show();
-            startGeofenceMonitoring(9,9,1000);
+            startGeofenceMonitoring(5);
             startLocationMonitoring();
         }
     }
@@ -373,6 +389,10 @@ public class GPSSecureActivity extends AppCompatActivity {
         }
         return null;
     }
+
+
+
+
 
 
 }
