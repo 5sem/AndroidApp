@@ -20,10 +20,10 @@ import com.google.android.gms.location.LocationServices;
 import java.util.List;
 
 import static dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities.GPSSecureActivity.googleApiClient;
-import static dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities.GPSSecureActivity.startTimer;
+import static dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities.GPSSecureActivity.timerGeofence;
 
 public class GeofenceService extends IntentService {
-    public static final String TAG = "GeofenceString";
+    public static final String TAG = "GPSSecureActivity";
 
     public GeofenceService() {
         super(TAG);
@@ -52,12 +52,15 @@ public class GeofenceService extends IntentService {
                     Log.d(TAG, String.valueOf(mLastLocation.getLatitude()));
                     Log.d(TAG, String.valueOf(mLastLocation.getLongitude()));
                     geofenceList.remove(0);
-                    startTimer.cancel();
-
+                    //startTimer.cancel();
+                    timerGeofence.cancel();
+                    Log.d(TAG, "onHandleIntent: cancel");
+                    Log.d(TAG, "onHandleIntent: jeg er stoppet hilsen startimer");
                     double latitude = mLastLocation.getLatitude();
                     double longitude = mLastLocation.getLongitude();
 
-                    startTimer.schedule(new TimerGeofence(),0, 6000);
+                    timerGeofence.start();
+                    Log.d(TAG, "onHandleIntent: kaldt start");
                     continueGeofenceMonitoring(longitude,latitude,5);
 
 

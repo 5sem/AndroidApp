@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,10 +25,8 @@ import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +41,7 @@ import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.Task;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,14 +54,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.GPSSecureSettings;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Task.GeofenceService;
-import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Task.TimerGeofence;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Task.NotiTaskActivity;
 
-import static android.provider.Settings.ACTION_SECURITY_SETTINGS;
 import static dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities.App.channel_Alert;
 
 public class GPSSecureActivity extends AppCompatActivity {
@@ -72,6 +70,10 @@ public class GPSSecureActivity extends AppCompatActivity {
     private static final String TAG = "GPSSecureActivity";
     private static final String GEOFENCE_ID = "GEO";
     public static Timer startTimer;
+    public static CountDownTimer timerGeofence;
+    public static CountDownTimer timersms;
+    private Button tænd, sluk;
+    private GPSSecureSettings settings;
 
     public static GoogleApiClient googleApiClient = null;
 
@@ -83,6 +85,10 @@ public class GPSSecureActivity extends AppCompatActivity {
         setTitle("GPS Secure");
         Toolbar toolbar = findViewById(R.id.toolbartrack);
         setSupportActionBar(toolbar);
+
+        tænd = findViewById(R.id.gpsSecureTænd);
+        sluk = findViewById(R.id.gpsSecureSluk);
+        settings = new GPSSecureSettings();
 
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -104,6 +110,11 @@ public class GPSSecureActivity extends AppCompatActivity {
                     }
                 })
                 .build();
+
+        if (fileExists(this, FILE_NAME)) {
+            settings = HentFraFil();
+        }
+
     }
 
     @Override
@@ -120,11 +131,15 @@ public class GPSSecureActivity extends AppCompatActivity {
     }
 
     public void SendOnChannelAlert(String title, String context) {
+        Intent AlertIntent = new Intent(this, NotiTaskActivity.class);
+        PendingIntent AlertIntentPending = PendingIntent.getActivity(this,1,AlertIntent,PendingIntent.FLAG_CANCEL_CURRENT);
+
         Notification notification = new NotificationCompat.Builder(this, channel_Alert)
                 .setSmallIcon(R.drawable.ic_warning_yellow_24dp)
                 .setContentTitle(title)
                 .setContentText(context)
                 .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
+                .setContentIntent(AlertIntentPending)
                 .build();
 
         notificationManagerCompat.notify(1, notification);
@@ -169,7 +184,9 @@ public class GPSSecureActivity extends AppCompatActivity {
         }
     }
 
-    private void startGeofenceMonitoring( float radius) {
+
+    private void startGeofenceMonitoring(float radius) {
+        //TODO: check for sms her! og ikke nede i sms!
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -179,49 +196,84 @@ public class GPSSecureActivity extends AppCompatActivity {
             double latitude = mLastLocation.getLatitude();
             double longitude = mLastLocation.getLongitude();
 
+//TODO: float kan være null pga man kan gemme null
+          //radius = Float.parseFloat(settings.getDistance()); //settings return null
 
+
+            //TODO: bliver parameter brugt...
             Geofence geofence = new Geofence.Builder()
-                .setRequestId(GEOFENCE_ID)
-                .setCircularRegion(latitude, longitude, radius)
-                .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .setNotificationResponsiveness(5)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT)
-                .build();
+                    .setRequestId(GEOFENCE_ID)
+                    .setCircularRegion(latitude, longitude, radius)
+                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                    .setNotificationResponsiveness(5)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT)
+                    .build();
 
-        GeofencingRequest geofencingRequest = new GeofencingRequest.Builder()
-                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_EXIT)
-                .addGeofence(geofence).build();
+            GeofencingRequest geofencingRequest = new GeofencingRequest.Builder()
+                    .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_EXIT)
+                    .addGeofence(geofence).build();
 
-        Intent intent = new Intent(this, GeofenceService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            Intent intent = new Intent(this, GeofenceService.class);
+            PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        if (!googleApiClient.isConnected()) {
-            Log.d(TAG, "GoogleApiClient is not connected");
-        } else {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: husk at se om gps er tændt != tænd gps
-                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-                return;
-            }
+            if (!googleApiClient.isConnected()) {
+                Log.d(TAG, "GoogleApiClient is not connected");
+            } else {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: husk at se om gps er tændt != tænd gps
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                    return;
+                }
 
-            LocationServices.GeofencingApi.addGeofences(googleApiClient, geofencingRequest, pendingIntent)
-                    .setResultCallback(new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(Status status) {
-                            if (status.isSuccess()) {
-                                Log.d(TAG, "Succesfully added geofence");
-                                startTimer.schedule(new TimerGeofence(),0, 6000);
-                            } else {
-                                Log.d(TAG, "Failed to add geofence + " + status.getStatus());
+                LocationServices.GeofencingApi.addGeofences(googleApiClient, geofencingRequest, pendingIntent)
+                        .setResultCallback(new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(Status status) {
+                                if (status.isSuccess()) {
+                                    Log.d(TAG, "Succesfully added geofence");
+                                    if (tænd.getVisibility() == View.VISIBLE) {
+                                        tænd.setVisibility(View.GONE);
+                                        sluk.setVisibility(View.VISIBLE);
+                                    }
+                                    //TODO: kontrol af formel
+                                    timerGeofence = new CountDownTimer(Integer.parseInt(settings.getTime()) * 1000, 1000) {
+
+                                        @Override
+                                        public void onTick(long millisUntilFinished) {
+                                            Log.d(TAG, "onTick: timergeo" + millisUntilFinished / 1000);
+                                        }
+
+                                        public void onFinish() {
+                                            //TODO: vi bør lave den standard
+                                            SendOnChannelAlert("Advarsel!", "Besvar hurtigst muligt!");
+                                            //TODO: skrift countdown fra 1 min til X
+                                            timersms = new CountDownTimer(6000, 1000) { //venter 1 min
+                                                @Override
+                                                public void onTick(long millisUntilFinished) {
+                                                    Log.d(TAG, "onTick: smstimer" + millisUntilFinished / 1000);
+                                                }
+
+                                                @Override
+                                                public void onFinish() {
+                                                    SendAlertSMS();
+                                                    //fyr sms af og noti
+                                                    //start timer
+                                                }
+                                            }.start();
+
+                                        }
+
+                                    }.start();
+                                } else {
+                                    Log.d(TAG, "Failed to add geofence + " + status.getStatus());
+                                }
                             }
-                        }
-                    });
+                        });
             }
         }
     }
 
-    public int getLocationMode(Context context)
-    {
+    public int getLocationMode(Context context) {
         try {
             Log.d(TAG, "getLocationMode: " + Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE));
             return Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
@@ -232,20 +284,20 @@ public class GPSSecureActivity extends AppCompatActivity {
     }
 
 
-    private void stopGeofenceMonitoring(){
+    private void stopGeofenceMonitoring() {
         Log.d(TAG, "stopMonitoring called");
         ArrayList<String> geofenceIds = new ArrayList<String>();
         geofenceIds.add(GEOFENCE_ID);
         LocationServices.GeofencingApi.removeGeofences(googleApiClient, geofenceIds);
     }
 
-    public void gpsSecureTændSlukClicked(View view) {
+    public void gpsSecureTændClicked(View view) {
         //Start geofencing her
-        if (!fileExists(this,FILE_NAME)){
+        if (!fileExists(this, FILE_NAME)) {
             Toast.makeText(this, "Indstillinger ikke konfigureret!", Toast.LENGTH_LONG).show();
         }
 
-        if (getLocationMode(this) != 3){
+        if (getLocationMode(this) != 3) {
             AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 
             // Set Custom Title
@@ -269,14 +321,14 @@ public class GPSSecureActivity extends AppCompatActivity {
 
             // Set Button
             // you can more buttons
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"Fortsæt", new DialogInterface.OnClickListener() {
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Fortsæt", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     // Perform Action on Button YES btn
                     startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                 }
             });
 
-            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"Tilbage", new DialogInterface.OnClickListener() {
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Tilbage", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     // Perform Action on Button
                 }
@@ -301,12 +353,9 @@ public class GPSSecureActivity extends AppCompatActivity {
             cancelBT.setLayoutParams(negBtnLP);
             cancelBT.setText("Tilbage");
 
-        }
-
-        else {
+        } else {
             //TODO Geofencing implementeres her
-            //Toast.makeText(this, "Geofencing kommer snart!", Toast.LENGTH_SHORT).show();
-            startGeofenceMonitoring(5);
+            startGeofenceMonitoring(100);
             startLocationMonitoring();
         }
     }
@@ -316,13 +365,15 @@ public class GPSSecureActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    //TODO:hent nummer og besked fra gemt fil
     private void SendAlertSMS() {
-        if (CheckPermissions(Manifest.permission.SEND_SMS)){
+        if (CheckPermissions(Manifest.permission.SEND_SMS)) {
             SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage("69",null,"message",null,null);
-        }
-        else{
-            ActivityCompat.requestPermissions(GPSSecureActivity.this,new String[]{Manifest.permission.SEND_SMS},sendSmsPermissionsRequestCode);
+            //TODO: ændre message i settings, husk at send cords med
+            //TODO: contactnumber kan være null!
+            smsManager.sendTextMessage("123", null, "message", null, null);
+        } else {
+            ActivityCompat.requestPermissions(GPSSecureActivity.this, new String[]{Manifest.permission.SEND_SMS}, sendSmsPermissionsRequestCode);
         }
     }
 
@@ -368,7 +419,6 @@ public class GPSSecureActivity extends AppCompatActivity {
     }
 
 
-
     public GPSSecureSettings HentFraFil() {
         String jsonString = ReadContent();
 
@@ -391,8 +441,13 @@ public class GPSSecureActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
+    public void gpsSecureSlukClicked(View view) {
+        timerGeofence.cancel();
+        timersms.cancel();
+        stopGeofenceMonitoring();
+        sluk.setVisibility(View.GONE);
+        tænd.setVisibility(View.VISIBLE);
+        //TODO: remove me
+        Toast.makeText(this, "GPS Secure er slukket", Toast.LENGTH_SHORT).show();
+    }
 }

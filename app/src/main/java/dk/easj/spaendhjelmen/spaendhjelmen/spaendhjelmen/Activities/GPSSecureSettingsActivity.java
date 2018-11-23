@@ -203,6 +203,7 @@ public class GPSSecureSettingsActivity extends AppCompatActivity {
         return true;
     }
 
+    //TODO: mangler kontrol! du kan gemme null
     public void gpssecuresettingsgemClicked(View view) {
 
         Spinner spinnerTid = findViewById(R.id.gpssecuresettings_Tid);
