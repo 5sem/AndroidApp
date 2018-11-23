@@ -297,6 +297,11 @@ public class GPSSecureActivity extends AppCompatActivity {
             Toast.makeText(this, "Indstillinger ikke konfigureret!", Toast.LENGTH_LONG).show();
         }
 
+        //TODO: spørg om appen må bruge sms serivice
+        if (!CheckPermissions(Manifest.permission.SEND_SMS)) {
+            ActivityCompat.requestPermissions(GPSSecureActivity.this, new String[]{Manifest.permission.SEND_SMS}, sendSmsPermissionsRequestCode);
+        }
+
         if (getLocationMode(this) != 3) {
             AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 
@@ -355,7 +360,7 @@ public class GPSSecureActivity extends AppCompatActivity {
 
         } else {
             //TODO Geofencing implementeres her
-            startGeofenceMonitoring(100);
+            startGeofenceMonitoring(5);
             startLocationMonitoring();
         }
     }
@@ -429,6 +434,8 @@ public class GPSSecureActivity extends AppCompatActivity {
             String Distance = object.getString("Distance");
             String Time = object.getString("Time");
 
+
+            //TODO: lav en god besked med koordinater
             GPSSecureSettings gpsSecureSettings = new GPSSecureSettings(MobileNumber, "message", Distance, Time);
 
             return gpsSecureSettings;
@@ -443,7 +450,11 @@ public class GPSSecureActivity extends AppCompatActivity {
 
     public void gpsSecureSlukClicked(View view) {
         timerGeofence.cancel();
-        timersms.cancel();
+        if (timersms != null)
+        {
+            timersms.cancel();
+        }
+
         stopGeofenceMonitoring();
         sluk.setVisibility(View.GONE);
         tænd.setVisibility(View.VISIBLE);

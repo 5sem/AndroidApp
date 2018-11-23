@@ -214,21 +214,38 @@ public class GPSSecureSettingsActivity extends AppCompatActivity {
         String spinnerDistanceValue = spinnerDistance.getSelectedItem().toString();
         String mobileNumberValue = mobileNumber.getText().toString();
 
-        GPSSecureSettings gpsSecureSettings = new GPSSecureSettings();
-        gpsSecureSettings.setTime(spinnerTidValue);
-        gpsSecureSettings.setDistance(spinnerDistanceValue);
-        gpsSecureSettings.setContactNumber(mobileNumberValue);
+        if (!spinnerDistanceValue.matches("") && !spinnerTidValue.matches("")&& !mobileNumberValue.matches("") ){
+
+            if (mobileNumber.getText().length() == 8)
+            {
+                GPSSecureSettings gpsSecureSettings = new GPSSecureSettings();
+                gpsSecureSettings.setTime(spinnerTidValue);
+                gpsSecureSettings.setDistance(spinnerDistanceValue);
+                gpsSecureSettings.setContactNumber(mobileNumberValue);
+
+                Gson gson = new Gson();
+                String json = gson.toJson(gpsSecureSettings);
+
+                SaveContent(json);
+
+                Intent intent = new Intent(this, GPSSecureActivity.class);
+                startActivity(intent);
+
+                Toast.makeText(this, "Gemt!", Toast.LENGTH_LONG).show();
+            }
+            else{
+                Toast.makeText(this, "Forkert mobilnummer", Toast.LENGTH_SHORT).show();
+            }
 
 
-        Gson gson = new Gson();
-        String json = gson.toJson(gpsSecureSettings);
+        }else{
+            Toast.makeText(this, "Indstillinger ikke gemt", Toast.LENGTH_SHORT).show();
+        }
 
-        SaveContent(json);
 
-        Intent intent = new Intent(this, GPSSecureActivity.class);
-        startActivity(intent);
 
-        Toast.makeText(this, "Gemt!", Toast.LENGTH_LONG).show();
+
+
 
     }
 
