@@ -52,8 +52,8 @@ public class GPSSecureSettingsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbartrack);
         setSupportActionBar(toolbar);
 
-        final Spinner spinnerDistance = (Spinner) findViewById(R.id.gpssecuresettings_Distance);
-        final Spinner spinnerTid = (Spinner) findViewById(R.id.gpssecuresettings_Tid);
+        Spinner spinnerDistance = (Spinner) findViewById(R.id.gpssecuresettings_Distance);
+        Spinner spinnerTid = (Spinner) findViewById(R.id.gpssecuresettings_Tid);
         MobileNumber = (EditText) findViewById(R.id.gpssecuresettings_TelefonNummer);
 
         String[] distance = new String[]{
@@ -131,8 +131,8 @@ public class GPSSecureSettingsActivity extends AppCompatActivity {
 
         if (fileExists(this, FILE_NAME)){
             GPSSecureSettings gpsSecureSettings = HentFraFil();
-            setSpinText(spinnerDistance, gpsSecureSettings.getDistance());
-            setSpinText(spinnerTid, gpsSecureSettings.getTime());
+            spinnerDistance.setSelection(distanceArrayAdapter.getPosition(gpsSecureSettings.getDistance()));
+            spinnerTid.setSelection(tidArrayAdapter.getPosition(gpsSecureSettings.getTime()));
             MobileNumber.setText(gpsSecureSettings.getContactNumber());
         }
 

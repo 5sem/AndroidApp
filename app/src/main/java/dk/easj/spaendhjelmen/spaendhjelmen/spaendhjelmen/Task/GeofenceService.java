@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -17,13 +18,27 @@ import com.google.android.gms.location.GeofencingEvent;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
+
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.GPSSecureSettings;
 
 import static dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities.GPSSecureActivity.googleApiClient;
 import static dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities.GPSSecureActivity.timerGeofence;
 
 public class GeofenceService extends IntentService {
     public static final String TAG = "GPSSecureActivity";
+    private final String FILE_NAME = "GPSSecureSettings.txt";
+    private GPSSecureSettings settings;
+    private float radius;
 
     public GeofenceService() {
         super(TAG);
@@ -61,7 +76,7 @@ public class GeofenceService extends IntentService {
 
                     timerGeofence.start();
                     Log.d(TAG, "onHandleIntent: kaldt start");
-                    continueGeofenceMonitoring(longitude,latitude,5);
+                    continueGeofenceMonitoring(longitude,latitude);
 
 
                     //TODO: lav nyt geo fence og reset timer
@@ -73,7 +88,78 @@ public class GeofenceService extends IntentService {
     }
 
 
-    public void continueGeofenceMonitoring(double longitude, double latitude, float radius) {
+    //region hent fra fil
+    public boolean fileExists(Context context, String filename) {
+        File file = context.getFileStreamPath(filename);
+        if (file == null || !file.exists()) {
+            return false;
+        }
+        return true;
+    }
+
+    public GPSSecureSettings HentFraFil() {
+        String jsonString = ReadContent();
+
+        try {
+            JSONObject object = new JSONObject(jsonString);
+
+            String MobileNumber = object.getString("ContactNumber");
+            String Distance = object.getString("Distance");
+            String Time = object.getString("Time");
+
+
+            //TODO: lav en god besked med koordinater
+            GPSSecureSettings gpsSecureSettings = new GPSSecureSettings(MobileNumber, "message", Distance, Time);
+
+            return gpsSecureSettings;
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String ReadContent() {
+        FileInputStream fis = null;
+        String Rtn = "";
+        try {
+            fis = openFileInput(FILE_NAME);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String content;
+
+            while ((content = br.readLine()) != null) {
+                sb.append(content);
+            }
+            Rtn = sb.toString();
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return Rtn;
+    }
+    //endregion
+
+    public void continueGeofenceMonitoring(double longitude, double latitude) {
+
+        if (fileExists(this, FILE_NAME)) {
+            settings = HentFraFil();
+        }
+
+        radius = Float.parseFloat(settings.getDistance());
 
         Geofence geofence = new Geofence.Builder()
                 .setRequestId("GEO")
