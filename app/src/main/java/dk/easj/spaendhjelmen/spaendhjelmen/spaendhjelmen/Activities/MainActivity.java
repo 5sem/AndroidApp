@@ -300,6 +300,7 @@ public class MainActivity extends AppCompatActivity {
 
     //endregion
 
+    //region sorter
     public void sorterDifficulty(MenuItem item) {
         Log.d(TAG, "sorterDifficulty: start");
         ArrayList<Track> _list = trackList;
@@ -336,22 +337,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void menu_gpssecureClicked(MenuItem item) {
-        Intent intent = new Intent(this, GPSSecureActivity.class);
-        startActivity(intent);
-    }
-
-
-    public class ColourComparator implements Comparator<Track> {
-        public int compare(Track left, Track right) {
-            return left.colorCode.compareTo(right.colorCode);
-        }
-    }
-
     public void menuMainSortByLengthClicked(MenuItem item) {
-        ArrayList<Track> tracks = searchTrackList;
+        ArrayList<Track> tracks = trackList;
+        if (!searchTrackList.isEmpty()) tracks = searchTrackList;
 
-        if (sortByLenghtPressed == false) {
+        if (!sortByLenghtPressed) {
             Collections.sort(tracks, new Comparator<Track>() {
                 public int compare(Track t1, Track t2) {
                     return Double.compare(t1.Getlength(), t2.Getlength());
@@ -375,6 +365,22 @@ public class MainActivity extends AppCompatActivity {
         ListView mainListView = findViewById(R.id.mainListView);
         mainListView.setAdapter(new TrackAdapter(this, tracks));
     }
+
+    //endregion
+
+    public void menu_gpssecureClicked(MenuItem item) {
+        Intent intent = new Intent(this, GPSSecureActivity.class);
+        startActivity(intent);
+    }
+
+
+    public class ColourComparator implements Comparator<Track> {
+        public int compare(Track left, Track right) {
+            return left.colorCode.compareTo(right.colorCode);
+        }
+    }
+
+
 
     //endregion
 

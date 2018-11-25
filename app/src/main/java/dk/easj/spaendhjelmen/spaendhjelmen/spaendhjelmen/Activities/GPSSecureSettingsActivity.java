@@ -129,6 +129,7 @@ public class GPSSecureSettingsActivity extends AppCompatActivity {
         tidArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
         spinnerTid.setAdapter(tidArrayAdapter);
 
+        //TODO: henter indstillinger korrekt
         if (fileExists(this, FILE_NAME)){
             GPSSecureSettings gpsSecureSettings = HentFraFil();
             spinnerDistance.setSelection(distanceArrayAdapter.getPosition(gpsSecureSettings.getDistance()));
