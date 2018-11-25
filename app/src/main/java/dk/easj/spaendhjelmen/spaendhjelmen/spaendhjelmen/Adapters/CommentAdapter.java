@@ -48,16 +48,23 @@ public class CommentAdapter extends BaseAdapter {
         }
         UserComment comment =commentList.get(position);
 
-
+        TextView editTitle = convertView.findViewById(R.id.comment_txtViewEditTitle);
         ImageView imageView =(ImageView) convertView.findViewById(R.id.comment_ImageProflePic);
         TextView txtnavn = (TextView) convertView.findViewById(R.id.comment_txtViewNavn);
         TextView txtcomment = (TextView) convertView.findViewById(R.id.comment_txtViewComment);
         TextView txtedited = (TextView) convertView.findViewById(R.id.Comment_TxtViewEdited);
         TextView txtcreated = (TextView) convertView.findViewById(R.id.Comment_TxtViewCreated);
 
+
         txtnavn.setText(Integer.toString(comment.userId));
         //TODO: husk at ændre userid til navn
         txtcomment.setText(comment.usercomment);
+
+        if (comment.edited.after(comment.created)) {
+            editTitle.setVisibility(View.VISIBLE);
+            txtedited.setVisibility(View.VISIBLE);
+        }
+
         txtedited.setText(dateFormat.format(comment.edited.getTimeInMillis()));
         txtcreated.setText(dateFormat.format(comment.created.getTimeInMillis()));
         imageView.setImageResource(R.drawable.ic_person_black_24dp);
