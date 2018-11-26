@@ -47,6 +47,7 @@ android:layout_height="match_parent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:theme="@style/RatingBar"
+                    android:isIndicator="true"
                     />
             </LinearLayout>
 
@@ -73,12 +74,31 @@ android:layout_height="match_parent"
                 app:tabBackground="@drawable/tab_selector"
                 app:tabGravity="center"
                 app:tabIndicatorHeight="0dp"/>
-            <TextView
-                android:visibility="invisible"
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Personal Rating: ⋆⋆⋆⋆⋆"
-                android:textSize="20dp" />
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+                <RatingBar
+                    android:visibility="visible"
+                    android:id="@+id/Specific_rute_userrating"
+                    android:stepSize="1"
+                    android:layout_gravity="center"
+                    android:numStars="5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/RatingBar"
+                    />
+
+                <Button
+                    android:id="@+id/btnSubmit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bedøm"
+                    android:onClick="userRatingOnClick"/>
+            </LinearLayout>
 
 
 

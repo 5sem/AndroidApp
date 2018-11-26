@@ -89,6 +89,7 @@ public class SpecificTrack extends AppCompatActivity {
     private ViewPager viewPager;
     private ProgressBar pgb;
     public RatingBar ratingBar;
+    public RatingBar userRatingBar;
 
 private final String TAG = "SpecificTrack";
 
@@ -101,6 +102,7 @@ private final String TAG = "SpecificTrack";
         track = (Track) intent.getSerializableExtra("Track");
 
         ratingBar = findViewById(R.id.Specific_rute_rating);
+        userRatingBar = findViewById(R.id.Specific_rute_userrating);
 
         //appbar
         setTitle(track.name);
@@ -155,6 +157,7 @@ private final String TAG = "SpecificTrack";
        getRatingTask.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/Rating/" + track.getId());
 
     }
+
 
     public void mainFloatBtnClicked(View view) {
     AlertDialog alertDialog = new AlertDialog.Builder(this).create();
@@ -353,7 +356,32 @@ private final String TAG = "SpecificTrack";
         }
         return null;
     }
+
+
     //endregion
+
+    public void userRatingOnClick(View view) {
+        int userrating = Math.round(userRatingBar.getRating());
+        int userid = 1; //TODO: admin id, ændre til logged in user id
+        int trackid = track.getId();
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("UserId",userid);
+            jsonObject.put("TrackId", trackid);
+            jsonObject.put("UserRating",userrating);
+            String jsonDocument = jsonObject.toString();
+            PostuserRatingTask task = new PostuserRatingTask();
+            //task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/rating", jsonDocument);
+            task.execute("http://localhost:49329/Service1.svc/rating", jsonDocument);
+
+        }
+        catch (JSONException ex){
+            Log.d("add",ex.toString());
+
+        }
+    }
+
 
 //region Tasks
     private class DeleteTask extends AsyncTask<String, Void, CharSequence> {
@@ -547,6 +575,62 @@ private final String TAG = "SpecificTrack";
         protected void onCancelled(CharSequence message) {
             Toast.makeText(SpecificTrack.this, "Fejl:" + message.toString(), Toast.LENGTH_SHORT).show();
             Log.e("SPECIFICACTIVITY", message.toString());
+        }
+    }
+
+    private class PostuserRatingTask extends AsyncTask<String, Void, CharSequence> {
+
+        @Override
+        protected CharSequence doInBackground(String... params) {
+            String urlString = params[0];
+            String jsonDocument = params[1];
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setRequestProperty("Accept", "application/json");
+                OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream());
+                osw.write(jsonDocument);
+                osw.flush();
+                osw.close();
+                int responseCode = connection.getResponseCode();
+                if (responseCode / 100 != 2) {
+                    String responseMessage = connection.getResponseMessage();
+                    throw new IOException("HTTP response code: " + responseCode + " " + responseMessage);
+                }
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(connection.getInputStream()));
+                String line = reader.readLine();
+                return line;
+            } catch (MalformedURLException ex) {
+                cancel(true);
+                String message = ex.getMessage() + " " + urlString;
+                Log.e("POSTEXECUTE", message);
+                return message;
+            } catch (IOException ex) {
+                cancel(true);
+                Log.e("POSTEXECUTE", ex.getMessage());
+                return ex.getMessage();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(CharSequence charSequence) {
+            super.onPostExecute(charSequence);
+            Toast.makeText(SpecificTrack.this, "Tak for din bedømmelse af denne rute!", Toast.LENGTH_LONG).show();
+            Log.d("POSTEXECUTE", charSequence.toString());
+            finish();
+            startActivity(getIntent());
+        }
+
+        @Override
+        protected void onCancelled(CharSequence charSequence) {
+            super.onCancelled(charSequence);
+            Toast.makeText(SpecificTrack.this, "Fejl: " + charSequence.toString(), Toast.LENGTH_LONG).show();
+            Log.d("POSTEXECUTE", charSequence.toString());
+            finish();
         }
     }
 
