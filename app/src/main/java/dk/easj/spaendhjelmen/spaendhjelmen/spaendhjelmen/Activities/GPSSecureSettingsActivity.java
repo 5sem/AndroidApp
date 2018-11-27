@@ -52,8 +52,8 @@ public class GPSSecureSettingsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbartrack);
         setSupportActionBar(toolbar);
 
-        final Spinner spinnerDistance = (Spinner) findViewById(R.id.gpssecuresettings_Distance);
-        final Spinner spinnerTid = (Spinner) findViewById(R.id.gpssecuresettings_Tid);
+        Spinner spinnerDistance = (Spinner) findViewById(R.id.gpssecuresettings_Distance);
+        Spinner spinnerTid = (Spinner) findViewById(R.id.gpssecuresettings_Tid);
         MobileNumber = (EditText) findViewById(R.id.gpssecuresettings_TelefonNummer);
 
         String[] distance = new String[]{
@@ -129,10 +129,11 @@ public class GPSSecureSettingsActivity extends AppCompatActivity {
         tidArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
         spinnerTid.setAdapter(tidArrayAdapter);
 
+        //TODO: henter indstillinger korrekt
         if (fileExists(this, FILE_NAME)){
             GPSSecureSettings gpsSecureSettings = HentFraFil();
-            setSpinText(spinnerDistance, gpsSecureSettings.getDistance());
-            setSpinText(spinnerTid, gpsSecureSettings.getTime());
+            spinnerDistance.setSelection(distanceArrayAdapter.getPosition(gpsSecureSettings.getDistance()));
+            spinnerTid.setSelection(tidArrayAdapter.getPosition(gpsSecureSettings.getTime()));
             MobileNumber.setText(gpsSecureSettings.getContactNumber());
         }
 
@@ -214,21 +215,38 @@ public class GPSSecureSettingsActivity extends AppCompatActivity {
         String spinnerDistanceValue = spinnerDistance.getSelectedItem().toString();
         String mobileNumberValue = mobileNumber.getText().toString();
 
-        GPSSecureSettings gpsSecureSettings = new GPSSecureSettings();
-        gpsSecureSettings.setTime(spinnerTidValue);
-        gpsSecureSettings.setDistance(spinnerDistanceValue);
-        gpsSecureSettings.setContactNumber(mobileNumberValue);
+        if (!spinnerDistanceValue.matches("") && !spinnerTidValue.matches("")&& !mobileNumberValue.matches("") ){
+
+            if (mobileNumber.getText().length() == 8)
+            {
+                GPSSecureSettings gpsSecureSettings = new GPSSecureSettings();
+                gpsSecureSettings.setTime(spinnerTidValue);
+                gpsSecureSettings.setDistance(spinnerDistanceValue);
+                gpsSecureSettings.setContactNumber(mobileNumberValue);
+
+                Gson gson = new Gson();
+                String json = gson.toJson(gpsSecureSettings);
+
+                SaveContent(json);
+
+                Intent intent = new Intent(this, GPSSecureActivity.class);
+                startActivity(intent);
+
+                Toast.makeText(this, "Gemt!", Toast.LENGTH_LONG).show();
+            }
+            else{
+                Toast.makeText(this, "Forkert mobilnummer", Toast.LENGTH_SHORT).show();
+            }
 
 
-        Gson gson = new Gson();
-        String json = gson.toJson(gpsSecureSettings);
+        }else{
+            Toast.makeText(this, "Indstillinger ikke gemt", Toast.LENGTH_SHORT).show();
+        }
 
-        SaveContent(json);
 
-        Intent intent = new Intent(this, GPSSecureActivity.class);
-        startActivity(intent);
 
-        Toast.makeText(this, "Gemt!", Toast.LENGTH_LONG).show();
+
+
 
     }
 

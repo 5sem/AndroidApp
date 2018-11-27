@@ -74,6 +74,7 @@ public class GPSSecureActivity extends AppCompatActivity {
     public static CountDownTimer timersms;
     private Button tænd, sluk;
     private GPSSecureSettings settings;
+    private float radius;
 
     public static GoogleApiClient googleApiClient = null;
 
@@ -185,7 +186,7 @@ public class GPSSecureActivity extends AppCompatActivity {
     }
 
 
-    private void startGeofenceMonitoring(float radius) {
+    private void startGeofenceMonitoring() {
         //TODO: check for sms her! og ikke nede i sms!
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -197,7 +198,7 @@ public class GPSSecureActivity extends AppCompatActivity {
             double longitude = mLastLocation.getLongitude();
 
 //TODO: float kan være null pga man kan gemme null
-          //radius = Float.parseFloat(settings.getDistance()); //settings return null
+          radius = Float.parseFloat(settings.getDistance()); //settings return null
 
 
             //TODO: bliver parameter brugt...
@@ -236,7 +237,9 @@ public class GPSSecureActivity extends AppCompatActivity {
                                         sluk.setVisibility(View.VISIBLE);
                                     }
                                     //TODO: kontrol af formel
-                                    timerGeofence = new CountDownTimer(Integer.parseInt(settings.getTime()) * 1000, 1000) {
+                                    int test = Integer.parseInt(settings.getTime());
+                                    timerGeofence = new CountDownTimer(Integer.parseInt(settings.getTime()) * (1000*60), 1000) {
+
 
                                         @Override
                                         public void onTick(long millisUntilFinished) {
@@ -297,6 +300,11 @@ public class GPSSecureActivity extends AppCompatActivity {
             Toast.makeText(this, "Indstillinger ikke konfigureret!", Toast.LENGTH_LONG).show();
         }
 
+        //TODO: spørg om appen må bruge sms serivice
+        if (!CheckPermissions(Manifest.permission.SEND_SMS)) {
+            ActivityCompat.requestPermissions(GPSSecureActivity.this, new String[]{Manifest.permission.SEND_SMS}, sendSmsPermissionsRequestCode);
+        }
+
         if (getLocationMode(this) != 3) {
             AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 
@@ -355,7 +363,7 @@ public class GPSSecureActivity extends AppCompatActivity {
 
         } else {
             //TODO Geofencing implementeres her
-            startGeofenceMonitoring(100);
+            startGeofenceMonitoring();
             startLocationMonitoring();
         }
     }
@@ -371,7 +379,7 @@ public class GPSSecureActivity extends AppCompatActivity {
             SmsManager smsManager = SmsManager.getDefault();
             //TODO: ændre message i settings, husk at send cords med
             //TODO: contactnumber kan være null!
-            smsManager.sendTextMessage("123", null, "message", null, null);
+            smsManager.sendTextMessage(settings.getContactNumber(), null, "message", null, null);
         } else {
             ActivityCompat.requestPermissions(GPSSecureActivity.this, new String[]{Manifest.permission.SEND_SMS}, sendSmsPermissionsRequestCode);
         }
@@ -429,6 +437,8 @@ public class GPSSecureActivity extends AppCompatActivity {
             String Distance = object.getString("Distance");
             String Time = object.getString("Time");
 
+
+            //TODO: lav en god besked med koordinater
             GPSSecureSettings gpsSecureSettings = new GPSSecureSettings(MobileNumber, "message", Distance, Time);
 
             return gpsSecureSettings;
@@ -443,7 +453,11 @@ public class GPSSecureActivity extends AppCompatActivity {
 
     public void gpsSecureSlukClicked(View view) {
         timerGeofence.cancel();
-        timersms.cancel();
+        if (timersms != null)
+        {
+            timersms.cancel();
+        }
+
         stopGeofenceMonitoring();
         sluk.setVisibility(View.GONE);
         tænd.setVisibility(View.VISIBLE);

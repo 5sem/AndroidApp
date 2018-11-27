@@ -3,13 +3,18 @@ package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.RequiresPermission;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -40,7 +45,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -48,6 +56,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.CommentAdapter;
@@ -56,7 +67,6 @@ import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Http.ReadHttpTask;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Picture;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Track;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.UserComment;
-import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Task.GetRatingPersonalTask;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Task.GetRatingTask;
 
 public class SpecificTrack extends AppCompatActivity {
@@ -74,16 +84,15 @@ public class SpecificTrack extends AppCompatActivity {
             specific_track_maxHeight,
             specific_track_difficulty,
             specific_track_addr;
-    public TextView specific_track_Txt_PersonalRating;
     private ImageView imgview;
 
     private ViewPager viewPager;
     private ProgressBar pgb;
     public RatingBar ratingBar, personalRatingBar;
 
-    private final String TAG = "SpecificTrack";
+private final String TAG = "SpecificTrack";
 
-    @Override
+@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_specific_track);
@@ -144,26 +153,13 @@ public class SpecificTrack extends AppCompatActivity {
         ReadTaskPicture taskpicture = new ReadTaskPicture();
         taskpicture.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/pictures/" + track.getId());
 
-        //TODO: vi har endnu ikke et bruger ID fordi bruger ikke er logget ind!
-        GetRatingPersonalTask getRatingPersonalTask = new GetRatingPersonalTask(this);
-        //TODO: lav mig om til public rest
-        getRatingPersonalTask.execute("http://localhost:49329/Service1.svc/Rating/personlig/" + "1/" + track.getId());
-
         GetRatingTask getRatingTask = new GetRatingTask(this);
-        getRatingTask.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/Rating/" + track.getId());
+       getRatingTask.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/Rating/" + track.getId());
 
-        personalRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                //TODO: post her
-                Log.d(TAG, "onRatingChanged: " + rating);
-                //TODO: rest kontrol om user allerede har rated hvis ja, put ellers post
-            }
-        });
     }
 
     public void mainFloatBtnClicked(View view) {
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+    AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 
         // Set Custom Title
         TextView title = new TextView(this);
@@ -184,7 +180,7 @@ public class SpecificTrack extends AppCompatActivity {
 
         // Set Button
         // you can more buttons
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // Perform Action on Button
 
@@ -192,23 +188,24 @@ public class SpecificTrack extends AppCompatActivity {
                 int userid = 1; //TODO: admin id, ændre til logged in user id
                 int trackid = track.getId();
 
-                try {
+                try{
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("UserId", userid);
+                    jsonObject.put("UserId",userid);
                     jsonObject.put("TrackId", trackid);
-                    jsonObject.put("UserComment", comment);
+                    jsonObject.put("UserComment",comment);
                     String jsonDocument = jsonObject.toString();
                     PostCommentTask task = new PostCommentTask();
                     task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments", jsonDocument);
-                } catch (JSONException ex) {
-                    Log.d("add", ex.toString());
+                }
+                catch (JSONException ex){
+                    Log.d("add",ex.toString());
 
                 }
 
             }
         });
 
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "CANCEL", new DialogInterface.OnClickListener() {
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"CANCEL", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // Perform Action on Button
             }
@@ -238,7 +235,7 @@ public class SpecificTrack extends AppCompatActivity {
 
     public void openGoogleMaps(View view) {
 
-        Uri gmmIntentUri = Uri.parse("geo:" + track.latitude + "," + track.longitude + "?q=" + Uri.encode(track.address + "," + track.city));
+        Uri gmmIntentUri = Uri.parse("geo:" + track.latitude +"," + track.longitude +"?q=" + Uri.encode( track.address+"," + track.city));
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
         mapIntent.setPackage("com.google.android.apps.maps");
         if (mapIntent.resolveActivity(getPackageManager()) != null) {
@@ -247,19 +244,24 @@ public class SpecificTrack extends AppCompatActivity {
     }
 
 
+
     //endregion
 
 
-    public void showMenu(View view, final int idtodelete) {
-        PopupMenu menu = new PopupMenu(this, view);
-        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+    public void showMenu (View view, final int idtodelete)
+    {
+        PopupMenu menu = new PopupMenu (this, view);
+        menu.setOnMenuItemClickListener (new PopupMenu.OnMenuItemClickListener ()
+        {
 
             @Override
-            public boolean onMenuItemClick(MenuItem item) {
+            public boolean onMenuItemClick (MenuItem item)
+            {
                 int id = item.getItemId();
-                switch (id) {
-                    case R.id.menu_comment_delete:
-                        Log.i(TAG, "Slet");
+                switch (id)
+                {
+                    case R.id.menu_comment_delete: Log.i (TAG, "Slet");
                     {
 
                         AlertDialog alertDialog = new AlertDialog.Builder(SpecificTrack.this).create();
@@ -278,10 +280,11 @@ public class SpecificTrack extends AppCompatActivity {
 
 
                                 DeleteTask task = new DeleteTask();
-                                task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments/" + idtodelete);
+                                task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments/"+ idtodelete);
                                 finish();
                             }
                         });
+
 
 
                         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Fortryd", new DialogInterface.OnClickListener() {
@@ -290,6 +293,8 @@ public class SpecificTrack extends AppCompatActivity {
 
                             }
                         });
+
+
 
 
                         new Dialog(getApplicationContext());
@@ -313,15 +318,13 @@ public class SpecificTrack extends AppCompatActivity {
 
                         break;
                     }
-                    case R.id.menu_comment_edit:
-                        Log.i(TAG, "Rediger");
-                        break;
+                    case R.id.menu_comment_edit: Log.i (TAG, "Rediger"); break;
                     //TODO: redigere
                 }
                 return true;
             }
         });
-        menu.inflate(R.menu.menu_comment);
+        menu.inflate (R.menu.menu_comment);
         menu.show();
     }
 
@@ -347,7 +350,7 @@ public class SpecificTrack extends AppCompatActivity {
             return "Blå";
         if (color.equals("green"))
             return "Grøn";
-        else {
+        else{
 
         }
         return null;
@@ -355,6 +358,30 @@ public class SpecificTrack extends AppCompatActivity {
     //endregion
 
     //region Tasks
+    public void userRatingOnClick(View view) {
+        int userrating = Math.round(personalRatingBar.getRating());
+        int userid = 1; //TODO: admin id, ændre til logged in user id
+        int trackid = track.getId();
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("UserId",userid);
+            jsonObject.put("TrackId", trackid);
+            jsonObject.put("UserRating",userrating);
+            String jsonDocument = jsonObject.toString();
+            PostuserRatingTask task = new PostuserRatingTask();
+            //task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/rating", jsonDocument);
+            task.execute("http://localhost:49329/Service1.svc/rating", jsonDocument);
+
+        }
+        catch (JSONException ex){
+            Log.d("add",ex.toString());
+
+        }
+    }
+
+
+//region Tasks
     private class DeleteTask extends AsyncTask<String, Void, CharSequence> {
         @Override
         protected CharSequence doInBackground(String... urls) {
@@ -379,7 +406,6 @@ public class SpecificTrack extends AppCompatActivity {
         protected void onCancelled(CharSequence charSequence) {
             super.onCancelled(charSequence);
         }
-
         @Override
         protected void onPostExecute(CharSequence charSequence) {
             super.onPostExecute(charSequence);
@@ -467,7 +493,7 @@ public class SpecificTrack extends AppCompatActivity {
 
                     Calendar edited = JsonDateToDate(getStringEdited);
 
-                    UserComment userComment = new UserComment(id, trackid, userid, usercomment, created, edited);
+                    UserComment userComment = new UserComment(id, trackid, userid,usercomment, created, edited);
                     commentList.add(userComment);
                 }
                 TextView Kommentar = findViewById(R.id.Specific_track_TxtViewKommentar);
@@ -512,7 +538,7 @@ public class SpecificTrack extends AppCompatActivity {
 
                     byte[] image = new byte[jsonarray.length()];
                     for (int counter = 0; counter < jsonarray.length(); counter++) {
-                        image[counter] = (byte) (((int) jsonarray.get(counter)) & 0xFF);
+                        image[counter]=(byte)(((int)jsonarray.get(counter)) & 0xFF);
                     }
                     Base64.encodeToString(image, Base64.DEFAULT);
 
@@ -521,7 +547,7 @@ public class SpecificTrack extends AppCompatActivity {
 
                     Picture Pictures = new Picture(id, name, image, trackid);
                     pictureList.add(Pictures);
-                    Drawable imagedrawble = new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(image, 0, image.length));
+                    Drawable imagedrawble = new BitmapDrawable(getResources(),BitmapFactory.decodeByteArray(image, 0, image.length));
                     pictureListdrawable.add(imagedrawble);
                 }
 
@@ -532,7 +558,7 @@ public class SpecificTrack extends AppCompatActivity {
                 param.height = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 250, getResources().getDisplayMetrics()));
                 viewPager.setLayoutParams(param);
 
-                ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(SpecificTrack.this, pictureListdrawable);
+                ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(SpecificTrack.this,pictureListdrawable);
                 viewPager.setAdapter(viewPagerAdapter);
 
                 TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
@@ -547,6 +573,62 @@ public class SpecificTrack extends AppCompatActivity {
         protected void onCancelled(CharSequence message) {
             Toast.makeText(SpecificTrack.this, "Fejl:" + message.toString(), Toast.LENGTH_SHORT).show();
             Log.e("SPECIFICACTIVITY", message.toString());
+        }
+    }
+
+    private class PostuserRatingTask extends AsyncTask<String, Void, CharSequence> {
+
+        @Override
+        protected CharSequence doInBackground(String... params) {
+            String urlString = params[0];
+            String jsonDocument = params[1];
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setRequestProperty("Accept", "application/json");
+                OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream());
+                osw.write(jsonDocument);
+                osw.flush();
+                osw.close();
+                int responseCode = connection.getResponseCode();
+                if (responseCode / 100 != 2) {
+                    String responseMessage = connection.getResponseMessage();
+                    throw new IOException("HTTP response code: " + responseCode + " " + responseMessage);
+                }
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(connection.getInputStream()));
+                String line = reader.readLine();
+                return line;
+            } catch (MalformedURLException ex) {
+                cancel(true);
+                String message = ex.getMessage() + " " + urlString;
+                Log.e("POSTEXECUTE", message);
+                return message;
+            } catch (IOException ex) {
+                cancel(true);
+                Log.e("POSTEXECUTE", ex.getMessage());
+                return ex.getMessage();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(CharSequence charSequence) {
+            super.onPostExecute(charSequence);
+            Toast.makeText(SpecificTrack.this, "Tak for din bedømmelse af denne rute!", Toast.LENGTH_LONG).show();
+            Log.d("POSTEXECUTE", charSequence.toString());
+            finish();
+            startActivity(getIntent());
+        }
+
+        @Override
+        protected void onCancelled(CharSequence charSequence) {
+            super.onCancelled(charSequence);
+            Toast.makeText(SpecificTrack.this, "Fejl: " + charSequence.toString(), Toast.LENGTH_LONG).show();
+            Log.d("POSTEXECUTE", charSequence.toString());
+            finish();
         }
     }
 
