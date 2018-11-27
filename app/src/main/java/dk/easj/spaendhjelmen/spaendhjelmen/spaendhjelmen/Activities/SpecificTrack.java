@@ -65,8 +65,10 @@ import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.CommentAdapter
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.ViewPagerAdapter;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Http.ReadHttpTask;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Picture;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Rating;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Track;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.UserComment;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Task.GetRatingPersonalTask;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Task.GetRatingTask;
 
 public class SpecificTrack extends AppCompatActivity {
@@ -85,10 +87,11 @@ public class SpecificTrack extends AppCompatActivity {
             specific_track_difficulty,
             specific_track_addr;
     private ImageView imgview;
-
+    public TextView specific_track_Txt_PersonalRating;
     private ViewPager viewPager;
     private ProgressBar pgb;
     public RatingBar ratingBar, personalRatingBar;
+
 
 private final String TAG = "SpecificTrack";
 
@@ -102,7 +105,7 @@ private final String TAG = "SpecificTrack";
 
         ratingBar = findViewById(R.id.Specific_rute_rating);
         personalRatingBar = findViewById(R.id.Specific_rute_Personalrating);
-        specific_track_Txt_PersonalRating = findViewById(R.id.Specific_rute_TxtpersonalRating);
+        specific_track_Txt_PersonalRating = findViewById(R.id.specific_track_Txt_PersonalRating);
 
         //appbar
         setTitle(track.name);
@@ -156,6 +159,18 @@ private final String TAG = "SpecificTrack";
         GetRatingTask getRatingTask = new GetRatingTask(this);
        getRatingTask.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/Rating/" + track.getId());
 
+        GetRatingPersonalTask getRatingPersonalTask = new GetRatingPersonalTask(this);
+        //TODO replace 1 med ID fra rigtig bruger
+        getRatingPersonalTask.execute("restservice/" + "1" + "/" + track.getId());
+
+        personalRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                //TODO post her, evt bekræft
+                Log.d(TAG, "onRatingChanged: " + rating);
+                //TODO: rest, ser om bruger allerede har noget på db? har bruger put, har bruger ikke post
+            }
+        });
     }
 
     public void mainFloatBtnClicked(View view) {

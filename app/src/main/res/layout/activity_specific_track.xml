@@ -81,7 +81,7 @@ android:layout_height="match_parent"
 
                <TextView
                    android:layout_gravity="center"
-                   android:id="@+id/Specific_rute_TxtpersonalRating"
+                   android:id="@+id/specific_track_Txt_PersonalRating"
 
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
