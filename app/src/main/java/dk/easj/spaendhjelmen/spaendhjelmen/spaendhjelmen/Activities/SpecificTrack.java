@@ -87,7 +87,6 @@ public class SpecificTrack extends AppCompatActivity {
             specific_track_difficulty,
             specific_track_addr;
     private ImageView imgview;
-    public TextView specific_track_Txt_PersonalRating;
     private ViewPager viewPager;
     private ProgressBar pgb;
     public RatingBar ratingBar, personalRatingBar;
@@ -105,7 +104,6 @@ private final String TAG = "SpecificTrack";
 
         ratingBar = findViewById(R.id.Specific_rute_rating);
         personalRatingBar = findViewById(R.id.Specific_rute_Personalrating);
-        specific_track_Txt_PersonalRating = findViewById(R.id.specific_track_Txt_PersonalRating);
 
         //appbar
         setTitle(track.name);
@@ -157,20 +155,13 @@ private final String TAG = "SpecificTrack";
         taskpicture.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/pictures/" + track.getId());
 
         GetRatingTask getRatingTask = new GetRatingTask(this);
-       getRatingTask.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/Rating/" + track.getId());
+        getRatingTask.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/Rating/" + track.getId());
 
         GetRatingPersonalTask getRatingPersonalTask = new GetRatingPersonalTask(this);
         //TODO replace 1 med ID fra rigtig bruger
-        getRatingPersonalTask.execute("restservice/" + "1" + "/" + track.getId());
+        getRatingPersonalTask.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/rating/personlig/" + "1" + "/" + track.getId());
 
-        personalRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                PostToDb(rating);
-                Log.d(TAG, "onRatingChanged: " + rating);
-                //TODO: rest, ser om bruger allerede har noget på db? har bruger put, har bruger ikke post
-            }
-        });
+
     }
 
     public void mainFloatBtnClicked(View view) {
@@ -332,19 +323,88 @@ private final String TAG = "SpecificTrack";
                     }
                     case R.id.menu_comment_edit: Log.i (TAG, "Rediger");
 
-                    AlertDialog alertDialog = new AlertDialog.Builder(SpecificTrack.this).create();
+                        AlertDialog alertDialog = new AlertDialog.Builder(SpecificTrack.this).create();
 
-                        EditText editText = new EditText(SpecificTrack.this);
-                        editText.setText("Rediger");
-                        editText.setPadding(10, 10, 10, 10);
-                        editText.setGravity(Gravity.CENTER);
-                        editText.setTextColor(Color.BLACK);
-                        editText.setTextSize(20);
-                        alertDialog.setCustomTitle(editText);
+                        // Set Custom Title
+                        TextView title = new TextView(SpecificTrack.this);
+                        // Title Properties
+                        title.setText("Rediger kommentar");
+                        title.setPadding(10, 10, 10, 10);   // Set Position
+                        title.setGravity(Gravity.CENTER);
+                        title.setTextColor(Color.BLACK);
+                        title.setTextSize(20);
+                        alertDialog.setCustomTitle(title);
 
+                        // Set Message
+                        final EditText msg = new EditText(SpecificTrack.this);
+                        // Message Properties
 
+                        for (UserComment comment : commentList
+                             ) {
+                            if (comment.id == idtodelete){
+                                msg.setText(comment.usercomment);
 
+                            }
+                        }
 
+                        msg.setGravity(Gravity.CENTER_HORIZONTAL);
+                        msg.setTextColor(Color.BLACK);
+                        alertDialog.setView(msg);
+
+                        // Set Button
+                        // you can more buttons
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Perform Action on Button
+
+                                String comment = msg.getText().toString();
+                                int userid = 1; //TODO: admin id, ændre til logged in user id
+                                int trackid = track.getId();
+                                Calendar calendar = Calendar.getInstance();
+                                String jsonDateString = "/Date(" + calendar.getTimeInMillis() + ")/";
+
+                                try{
+                                    JSONObject jsonObject = new JSONObject();
+                                    jsonObject.put("UserId",userid);
+                                    jsonObject.put("TrackId", trackid);
+                                    //jsonObject.put("Edited", jsonDateString);
+                                    jsonObject.put("UserComment",comment);
+                                    String jsonDocument = jsonObject.toString();
+                                    UpdateCommentTask task = new UpdateCommentTask();
+                                    task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments/"+idtodelete, jsonDocument);
+                                }
+                                catch (JSONException ex){
+                                    Log.d("add",ex.toString());
+
+                                }
+
+                            }
+                        });
+
+                        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"CANCEL", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Perform Action on Button
+                            }
+                        });
+
+                        new Dialog(getApplicationContext());
+                        alertDialog.show();
+
+                        // Set Properties for OK Button
+                        final Button okBT = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+                        LinearLayout.LayoutParams neutralBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
+                        neutralBtnLP.gravity = Gravity.FILL_HORIZONTAL;
+                        okBT.setPadding(50, 10, 10, 10);   // Set Position
+                        okBT.setTextColor(getResources().getColor(R.color.colorGreen));
+                        okBT.setLayoutParams(neutralBtnLP);
+                        okBT.setText("Ok");
+
+                        final Button cancelBT = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                        LinearLayout.LayoutParams negBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
+                        negBtnLP.gravity = Gravity.FILL_HORIZONTAL;
+                        cancelBT.setTextColor(Color.RED);
+                        cancelBT.setLayoutParams(negBtnLP);
+                        cancelBT.setText("Fortryd");
 
 
 
