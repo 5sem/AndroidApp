@@ -309,9 +309,6 @@ private final String TAG = "SpecificTrack";
                             }
                         });
 
-
-
-
                         new Dialog(getApplicationContext());
                         alertDialog.show();
 
@@ -333,8 +330,28 @@ private final String TAG = "SpecificTrack";
 
                         break;
                     }
-                    case R.id.menu_comment_edit: Log.i (TAG, "Rediger"); break;
-                    //TODO: redigere
+                    case R.id.menu_comment_edit: Log.i (TAG, "Rediger");
+
+                    AlertDialog alertDialog = new AlertDialog.Builder(SpecificTrack.this).create();
+
+                        EditText editText = new EditText(SpecificTrack.this);
+                        editText.setText("Rediger");
+                        editText.setPadding(10, 10, 10, 10);
+                        editText.setGravity(Gravity.CENTER);
+                        editText.setTextColor(Color.BLACK);
+                        editText.setTextSize(20);
+                        alertDialog.setCustomTitle(editText);
+
+
+
+
+
+
+
+
+
+                    break;
+
                 }
                 return true;
             }
@@ -471,6 +488,63 @@ private final String TAG = "SpecificTrack";
         protected void onPostExecute(CharSequence charSequence) {
             super.onPostExecute(charSequence);
             Toast.makeText(SpecificTrack.this, "Kommentar Oprettet!", Toast.LENGTH_LONG).show();
+            Log.d("POSTEXECUTE", charSequence.toString());
+            finish();
+            startActivity(getIntent());
+        }
+
+        @Override
+        protected void onCancelled(CharSequence charSequence) {
+            super.onCancelled(charSequence);
+            Toast.makeText(SpecificTrack.this, "Fejl: " + charSequence.toString(), Toast.LENGTH_LONG).show();
+            Log.d("POSTEXECUTE", charSequence.toString());
+            finish();
+        }
+    }
+
+
+    private class UpdateCommentTask extends AsyncTask<String, Void, CharSequence> {
+
+        @Override
+        protected CharSequence doInBackground(String... params) {
+            String urlString = params[0];
+            String jsonDocument = params[1];
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("PUT");
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setRequestProperty("Accept", "application/json");
+                OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream());
+                osw.write(jsonDocument);
+                osw.flush();
+                osw.close();
+                int responseCode = connection.getResponseCode();
+                if (responseCode / 100 != 2) {
+                    String responseMessage = connection.getResponseMessage();
+                    throw new IOException("HTTP response code: " + responseCode + " " + responseMessage);
+                }
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(connection.getInputStream()));
+                String line = reader.readLine();
+                return line;
+            } catch (MalformedURLException ex) {
+                cancel(true);
+                String message = ex.getMessage() + " " + urlString;
+                Log.e("UPDATEEXECUTE", message);
+                return message;
+            } catch (IOException ex) {
+                cancel(true);
+                Log.e("UPDATEEXECUTE", ex.getMessage());
+                return ex.getMessage();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(CharSequence charSequence) {
+            super.onPostExecute(charSequence);
+            Toast.makeText(SpecificTrack.this, "Kommentar Opdateret!", Toast.LENGTH_LONG).show();
             Log.d("POSTEXECUTE", charSequence.toString());
             finish();
             startActivity(getIntent());
