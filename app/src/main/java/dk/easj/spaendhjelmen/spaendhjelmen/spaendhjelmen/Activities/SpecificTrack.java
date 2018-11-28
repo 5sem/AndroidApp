@@ -166,7 +166,7 @@ private final String TAG = "SpecificTrack";
         personalRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                //TODO post her, evt bekræft
+                PostToDb(rating);
                 Log.d(TAG, "onRatingChanged: " + rating);
                 //TODO: rest, ser om bruger allerede har noget på db? har bruger put, har bruger ikke post
             }
@@ -372,9 +372,8 @@ private final String TAG = "SpecificTrack";
     }
     //endregion
 
-    //region Tasks
-    public void userRatingOnClick(View view) {
-        int userrating = Math.round(personalRatingBar.getRating());
+    public void PostToDb(float rating){
+        int userrating = Math.round(rating);
         int userid = 1; //TODO: admin id, ændre til logged in user id
         int trackid = track.getId();
 
@@ -385,8 +384,7 @@ private final String TAG = "SpecificTrack";
             jsonObject.put("UserRating",userrating);
             String jsonDocument = jsonObject.toString();
             PostuserRatingTask task = new PostuserRatingTask();
-            //task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/rating", jsonDocument);
-            task.execute("http://localhost:49329/Service1.svc/rating", jsonDocument);
+            task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/rating", jsonDocument);
 
         }
         catch (JSONException ex){
@@ -394,7 +392,6 @@ private final String TAG = "SpecificTrack";
 
         }
     }
-
 
 //region Tasks
     private class DeleteTask extends AsyncTask<String, Void, CharSequence> {
