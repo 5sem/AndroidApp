@@ -32,6 +32,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -62,11 +63,13 @@ import java.util.concurrent.TimeUnit;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.CommentAdapter;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.TrackAdapter;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Adapters.ViewPagerAdapter;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Http.ReadHttpTask;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Picture;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Rating;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.Track;
+import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.User;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.UserComment;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Task.GetRatingPersonalTask;
 import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Task.GetRatingTask;
@@ -75,6 +78,7 @@ public class SpecificTrack extends AppCompatActivity {
     private Track track;
     private UserComment userComment;
     public ArrayList<Picture> pictureList = new ArrayList<>();
+    public ArrayList<User> userList = new ArrayList<>();
     public ArrayList<Drawable> pictureListdrawable = new ArrayList<>();
     private final ArrayList<UserComment> commentList = new ArrayList<>();
     private TextView
@@ -405,9 +409,14 @@ private final String TAG = "SpecificTrack";
                         cancelBT.setTextColor(Color.RED);
                         cancelBT.setLayoutParams(negBtnLP);
                         cancelBT.setText("Fortryd");
+                    break;
 
 
+                    case R.id.menu_comment_visprofil: Log.i (TAG, "VisProfil");
 
+                        int userid = 1; //TODO: admin id, ændre til logged in user id
+                        ReadUserTask task = new ReadUserTask();
+                        task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/users/" + userid);
 
 
                     break;
@@ -419,6 +428,62 @@ private final String TAG = "SpecificTrack";
         menu.inflate (R.menu.menu_comment);
         menu.show();
     }
+
+
+private User user;
+
+
+    private class ReadUserTask extends ReadHttpTask {
+        @Override
+        protected void onPostExecute(CharSequence jsonString) {
+            try {
+
+                JSONObject obj = new JSONObject(jsonString.toString());
+
+                int id = obj.getInt("Id");
+                String authtoken = obj.getString("AuthToken");
+                String username = obj.getString("UserName");
+
+
+                user = new User(id, authtoken,username);
+
+                Intent intent = new Intent(getBaseContext(), ProfileActivity.class);
+                intent.putExtra("User", user);
+
+                startActivity(intent);
+
+
+            } catch (JSONException ex) {
+                Log.e("PROFILEACTIVITY", ex.getMessage());
+            }
+        }
+
+        @Override
+        protected void onCancelled(CharSequence message) {
+            Toast.makeText(SpecificTrack.this, "Fejl:" + message.toString(), Toast.LENGTH_SHORT).show();
+            Log.e("PROFILEACTIVITY", message.toString());
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //region Coonverters
     //converterer jsonstring til tid
