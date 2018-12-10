@@ -41,7 +41,7 @@ import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models.GPSSecureSetting
 public class GPSSecureSettingsActivity extends AppCompatActivity {
 
     private static final String TAG = "GPSSecureSettingsAct";
-    private EditText MobileNumber;
+    private EditText MobileNumber1,MobileNumber2,MobileNumber3, Message;
     private final String FILE_NAME = "GPSSecureSettings.txt";
 
     @Override
@@ -54,7 +54,10 @@ public class GPSSecureSettingsActivity extends AppCompatActivity {
 
         Spinner spinnerDistance = (Spinner) findViewById(R.id.gpssecuresettings_Distance);
         Spinner spinnerTid = (Spinner) findViewById(R.id.gpssecuresettings_Tid);
-        MobileNumber = (EditText) findViewById(R.id.gpssecuresettings_TelefonNummer);
+        MobileNumber1 = (EditText) findViewById(R.id.gpssecuresettings_TelefonNummer1);
+        MobileNumber2 = (EditText) findViewById(R.id.gpssecuresettings_TelefonNummer2);
+        MobileNumber3 = (EditText) findViewById(R.id.gpssecuresettings_TelefonNummer3);
+        Message = (EditText) findViewById(R.id.gpssecuresettings_Message);
 
         String[] distance = new String[]{
                 "Vælg distance i meter", "10", "15", "20", "25", "50", "100", "150", "200"
@@ -134,7 +137,10 @@ public class GPSSecureSettingsActivity extends AppCompatActivity {
             GPSSecureSettings gpsSecureSettings = HentFraFil();
             spinnerDistance.setSelection(distanceArrayAdapter.getPosition(gpsSecureSettings.getDistance()));
             spinnerTid.setSelection(tidArrayAdapter.getPosition(gpsSecureSettings.getTime()));
-            MobileNumber.setText(gpsSecureSettings.getContactNumber());
+            MobileNumber1.setText(gpsSecureSettings.getContactNumber1());
+            MobileNumber2.setText(gpsSecureSettings.getContactNumber2());
+            MobileNumber3.setText(gpsSecureSettings.getContactNumber3());
+            Message.setText(gpsSecureSettings.getContactMessaage());
         }
 
     }
@@ -209,20 +215,30 @@ public class GPSSecureSettingsActivity extends AppCompatActivity {
 
         Spinner spinnerTid = findViewById(R.id.gpssecuresettings_Tid);
         Spinner spinnerDistance = findViewById(R.id.gpssecuresettings_Distance);
-        EditText mobileNumber = findViewById(R.id.gpssecuresettings_TelefonNummer);
+        EditText mobileNumber1 = findViewById(R.id.gpssecuresettings_TelefonNummer1);
+        EditText mobileNumber2 = findViewById(R.id.gpssecuresettings_TelefonNummer2);
+        EditText mobileNumber3 = findViewById(R.id.gpssecuresettings_TelefonNummer3);
+        EditText message = findViewById(R.id.gpssecuresettings_Message);
+
 
         String spinnerTidValue = spinnerTid.getSelectedItem().toString();
         String spinnerDistanceValue = spinnerDistance.getSelectedItem().toString();
-        String mobileNumberValue = mobileNumber.getText().toString();
+        String mobileNumberValue1 = mobileNumber1.getText().toString();
+        String mobileNumberValue2 = mobileNumber2.getText().toString();
+        String mobileNumberValue3 = mobileNumber3.getText().toString();
+        String messageValue = message.getText().toString();
 
-        if (!spinnerDistanceValue.matches("") && !spinnerTidValue.matches("")&& !mobileNumberValue.matches("") ){
+        if (!spinnerDistanceValue.matches("") && !spinnerTidValue.matches("")&& !mobileNumberValue1.matches("") ){
 
-            if (mobileNumber.getText().length() == 8)
+            if (mobileNumber1.getText().length() == 8 && mobileNumber2.getText().length() == 8 && mobileNumber3.getText().length() == 8)
             {
                 GPSSecureSettings gpsSecureSettings = new GPSSecureSettings();
                 gpsSecureSettings.setTime(spinnerTidValue);
                 gpsSecureSettings.setDistance(spinnerDistanceValue);
-                gpsSecureSettings.setContactNumber(mobileNumberValue);
+                gpsSecureSettings.setContactNumber1(mobileNumberValue1);
+                gpsSecureSettings.setContactNumber2(mobileNumberValue2);
+                gpsSecureSettings.setContactNumber3(mobileNumberValue3);
+                gpsSecureSettings.setContactMessaage(messageValue);
 
                 Gson gson = new Gson();
                 String json = gson.toJson(gpsSecureSettings);
@@ -235,12 +251,12 @@ public class GPSSecureSettingsActivity extends AppCompatActivity {
                 Toast.makeText(this, "Gemt!", Toast.LENGTH_LONG).show();
             }
             else{
-                Toast.makeText(this, "Forkert mobilnummer", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Forkerte mobilnumre", Toast.LENGTH_SHORT).show();
             }
 
 
         }else{
-            Toast.makeText(this, "Indstillinger ikke gemt", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Indstillinger ikke gemt, sæt venligst indstillinger", Toast.LENGTH_SHORT).show();
         }
 
 
@@ -256,11 +272,14 @@ public class GPSSecureSettingsActivity extends AppCompatActivity {
         try {
             JSONObject object = new JSONObject(jsonString);
 
-            String MobileNumber = object.getString("ContactNumber");
+            String MobileNr1 = object.getString("ContactNumber1");
+            String MobileNr2 = object.getString("ContactNumber2");
+            String MobileNr3 = object.getString("ContactNumber3");
             String Distance = object.getString("Distance");
             String Time = object.getString("Time");
+            String Messagetext = object.getString("ContactMessaage");
 
-            GPSSecureSettings gpsSecureSettings = new GPSSecureSettings(MobileNumber, "message", Distance, Time);
+            GPSSecureSettings gpsSecureSettings = new GPSSecureSettings(MobileNr1,MobileNr2,MobileNr3, Messagetext, Distance, Time);
 
             return gpsSecureSettings;
 

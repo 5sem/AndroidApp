@@ -103,13 +103,17 @@ public class GeofenceService extends IntentService {
         try {
             JSONObject object = new JSONObject(jsonString);
 
-            String MobileNumber = object.getString("ContactNumber");
+            String MobileNumber1 = object.getString("ContactNumber1");
+            String MobileNumber2 = object.getString("ContactNumber2");
+            String MobileNumber3 = object.getString("ContactNumber3");
+            String Message = object.getString("ContactMessaage");
             String Distance = object.getString("Distance");
             String Time = object.getString("Time");
 
 
+
             //TODO: lav en god besked med koordinater
-            GPSSecureSettings gpsSecureSettings = new GPSSecureSettings(MobileNumber, "message", Distance, Time);
+            GPSSecureSettings gpsSecureSettings = new GPSSecureSettings(MobileNumber1,MobileNumber2,MobileNumber3, Message, Distance, Time);
 
             return gpsSecureSettings;
 

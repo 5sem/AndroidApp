@@ -1,66 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <include
         android:id="@+id/toolbartrack"
-        layout="@layout/toolbar_track"
-        />
+        layout="@layout/toolbar_track" />
 
     <TextView
-        android:layout_marginTop="50dp"
-        android:layout_gravity="center"
-        android:text="Distance i meter"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:text="Distance i meter" />
+
     <Spinner
         android:id="@+id/gpssecuresettings_Distance"
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </Spinner>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"></Spinner>
 
 
     <TextView
-        android:layout_marginTop="50dp"
-        android:layout_gravity="center"
-        android:text="Tid"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:text="Tid" />
+
     <Spinner
         android:id="@+id/gpssecuresettings_Tid"
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </Spinner>
-
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"></Spinner>
 
     <TextView
-        android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Kontakt person telefon nummer"
         android:layout_gravity="center"
-        />
+        android:layout_marginTop="20dp"
+        android:text="Besked til kontakt personer" />
 
     <EditText
-        android:id="@+id/gpssecuresettings_TelefonNummer"
+        android:id="@+id/gpssecuresettings_Message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:hint="Telefon nummer...."
+        android:layout_marginTop="20dp"
+        android:text="Kontakt person telefon nummer" />
+
+    <EditText
+        android:id="@+id/gpssecuresettings_TelefonNummer1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:hint="Telefon nummer 1...."
         android:inputType="phone" />
 
+    <EditText
+        android:id="@+id/gpssecuresettings_TelefonNummer2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:hint="Telefon nummer 2...."
+        android:inputType="phone" />
+
+    <EditText
+        android:id="@+id/gpssecuresettings_TelefonNummer3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:hint="Telefon nummer 3...."
+        android:inputType="phone" />
 
     <Button
-        android:onClick="gpssecuresettingsgemClicked"
-        android:layout_marginTop="20dp"
-        android:text="Gem"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:onClick="gpssecuresettingsgemClicked"
+        android:text="Gem" />
 
 </LinearLayout>

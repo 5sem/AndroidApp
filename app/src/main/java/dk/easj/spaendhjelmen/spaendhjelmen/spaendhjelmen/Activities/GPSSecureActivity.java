@@ -379,7 +379,14 @@ public class GPSSecureActivity extends AppCompatActivity {
             SmsManager smsManager = SmsManager.getDefault();
             //TODO: ændre message i settings, husk at send cords med
             //TODO: contactnumber kan være null!
-            smsManager.sendTextMessage(settings.getContactNumber(), null, "message", null, null);
+            if (settings.getContactNumber1().length() == 8)
+            smsManager.sendTextMessage(settings.getContactNumber1(), null, settings.getContactMessaage(), null, null);
+
+            if (settings.getContactNumber2().length() == 8)
+                smsManager.sendTextMessage(settings.getContactNumber2(), null, settings.getContactMessaage(), null, null);
+
+            if (settings.getContactNumber3().length() == 8)
+                smsManager.sendTextMessage(settings.getContactNumber3(), null, settings.getContactMessaage(), null, null);
         } else {
             ActivityCompat.requestPermissions(GPSSecureActivity.this, new String[]{Manifest.permission.SEND_SMS}, sendSmsPermissionsRequestCode);
         }
@@ -433,13 +440,16 @@ public class GPSSecureActivity extends AppCompatActivity {
         try {
             JSONObject object = new JSONObject(jsonString);
 
-            String MobileNumber = object.getString("ContactNumber");
+            String MobileNumber1 = object.getString("ContactNumber1");
+            String MobileNumber2 = object.getString("ContactNumber2");
+            String MobileNumber3 = object.getString("ContactNumber3");
             String Distance = object.getString("Distance");
             String Time = object.getString("Time");
+            String Message = object.getString("ContactMessaage");
 
 
             //TODO: lav en god besked med koordinater
-            GPSSecureSettings gpsSecureSettings = new GPSSecureSettings(MobileNumber, "message", Distance, Time);
+            GPSSecureSettings gpsSecureSettings = new GPSSecureSettings(MobileNumber1,MobileNumber2,MobileNumber3, Message, Distance, Time);
 
             return gpsSecureSettings;
 
