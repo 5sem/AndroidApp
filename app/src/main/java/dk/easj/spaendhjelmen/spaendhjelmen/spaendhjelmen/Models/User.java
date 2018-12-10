@@ -1,25 +1,24 @@
 package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Models;
 
+import android.support.v4.media.MediaDescriptionCompat;
+
 import java.io.Serializable;
 
 public class User implements Serializable {
     private int Id;
     public String AuthToken;
     public String Username;
-    public byte[] Image;
-    public int ContactNumber;
-    public String ContactMessage;
+    //public byte[] Image;
+    public String Description;
     public boolean Privacy;
 
 
-    public User(int id, String authToken, String username) {
+    public User(int id, String authToken, String username, String description, boolean privacy) {
         Id = id;
         AuthToken = authToken;
         Username = username;
-        //Image = image;
-        //ContactNumber = contactNumber;
-        //ContactMessage = contactMessage;
-        //Privacy = privacy;
+        Description = description;
+        Privacy = privacy;
     }
 
     public int getId() {
@@ -46,35 +45,19 @@ public class User implements Serializable {
         Username = username;
     }
 
-    //public byte[] getImage() {
-    //    return Image;
-   // }
+    public String getDescription() {
+        return Description;
+    }
 
-   // public void setImage(byte[] image) {
-    //    Image = image;
-    //}
+    public void setDescription(String description) {
+        Description = description;
+    }
 
-    //public int getContactNumber() {
-    //    return ContactNumber;
-    //}
+    public boolean isPrivacy() {
+        return Privacy;
+    }
 
-    //  public void setContactNumber(int contactNumber) {
-    //      ContactNumber = contactNumber;
-    // }
-
-    // public String getContactMessage() {
-    //     return ContactMessage;
-    // }
-
-    //public void setContactMessage(String contactMessage) {
-    //     ContactMessage = contactMessage;
-    // }
-
-    // public boolean isPrivacy() {
-    //     return Privacy;
-    // }
-
-    // public void setPrivacy(boolean privacy) {
-    //     Privacy = privacy;
-    // }
+    public void setPrivacy(boolean privacy) {
+        Privacy = privacy;
+    }
 }

@@ -443,9 +443,11 @@ private User user;
                 int id = obj.getInt("Id");
                 String authtoken = obj.getString("AuthToken");
                 String username = obj.getString("UserName");
+                String description = obj.getString("Description");
+                Boolean privacy = obj.getBoolean("Privacy");
 
 
-                user = new User(id, authtoken,username);
+                user = new User(id, authtoken,username,description,privacy);
 
                 Intent intent = new Intent(getBaseContext(), ProfileActivity.class);
                 intent.putExtra("User", user);
