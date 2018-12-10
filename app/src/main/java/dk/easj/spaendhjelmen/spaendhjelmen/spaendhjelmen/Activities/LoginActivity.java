@@ -47,15 +47,15 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         //store password
-        preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-        usernameField = findViewById(R.id.login_username_edittext);
-        passwordField = findViewById(R.id.login_password_edittext);
-        String username = preferences.getString(USERNAME, null);
-        String password = preferences.getString(PASSWORD, null);
-        if (username != null && password != null) {
-            usernameField.setText(username);
-            passwordField.setText(password);
-        }
+        //preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        //usernameField = findViewById(R.id.login_username_edittext);
+        //passwordField = findViewById(R.id.login_password_edittext);
+        //String username = preferences.getString(USERNAME, null);
+        //String password = preferences.getString(PASSWORD, null);
+        //if (username != null && password != null) {
+        //    usernameField.setText(username);
+        //    passwordField.setText(password);
+        //}
     }
 
     private void userLogin(){
@@ -108,20 +108,20 @@ public class LoginActivity extends AppCompatActivity {
         userLogin();
 
         //Remember password if checkbox is checked.
-        String username = usernameField.getText().toString();
-        String password = passwordField.getText().toString();
+        //String username = usernameField.getText().toString();
+        //String password = passwordField.getText().toString();
 
-        CheckBox checkBox = findViewById(R.id.login_remember_checkbox);
-        SharedPreferences.Editor editor = preferences.edit();
-        if (checkBox.isChecked()) {
-            editor.putString(USERNAME, username);
-            editor.putString(PASSWORD, password);
+        //CheckBox checkBox = findViewById(R.id.login_remember_checkbox);
+        //SharedPreferences.Editor editor = preferences.edit();
+        //if (checkBox.isChecked()) {
+        //    editor.putString(USERNAME, username);
+        //    editor.putString(PASSWORD, password);
 
-        } else {
-            editor.remove(USERNAME);
-            editor.remove(PASSWORD);
-        }
-        editor.apply();
+        //} else {
+        //    editor.remove(USERNAME);
+        //    editor.remove(PASSWORD);
+        //}
+        //editor.apply();
 
 
 
