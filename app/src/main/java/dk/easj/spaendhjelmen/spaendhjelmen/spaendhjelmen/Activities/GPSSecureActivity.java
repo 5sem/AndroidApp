@@ -392,7 +392,6 @@ public class GPSSecureActivity extends AppCompatActivity {
         }
     }
 
-
     public String ReadContent() {
         FileInputStream fis = null;
         String Rtn = "";

@@ -1,0 +1,86 @@
+{
+  "project_info": {
+    "project_number": "628728680829",
+    "firebase_url": "https://spaendhjaelmen.firebaseio.com",
+    "project_id": "spaendhjaelmen",
+    "storage_bucket": "spaendhjaelmen.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:628728680829:android:5b029e0763e21fc6",
+        "android_client_info": {
+          "package_name": "dk.easj.spaendhjelmen.spaendhjelmen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "628728680829-5mfmeg7h9laojsu4rub5pu4iusosj6jk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dk.easj.spaendhjelmen.spaendhjelmen",
+            "certificate_hash": "b547ad1a9f66912cd90394769a8f845f30f743ab"
+          }
+        },
+        {
+          "client_id": "628728680829-bl3snhrlohk6ucupbavmr49c5g4k9qbl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwiqalDKiCMcBGqFkbHcYkkDttx5vXSZE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "628728680829-bl3snhrlohk6ucupbavmr49c5g4k9qbl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:628728680829:android:e04fe06bcdf1a802",
+        "android_client_info": {
+          "package_name": "dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "628728680829-bl3snhrlohk6ucupbavmr49c5g4k9qbl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwiqalDKiCMcBGqFkbHcYkkDttx5vXSZE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
