@@ -51,6 +51,7 @@
             android:enabled="true"
             android:exported="true" />
 
+        <activity android:name=".spaendhjelmen.Activities.ProfileActivity"></activity>
     </application>
 
 </manifest>
