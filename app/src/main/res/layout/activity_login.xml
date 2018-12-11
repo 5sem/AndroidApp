@@ -90,7 +90,7 @@
             android:text="Opret ny bruger"
             android:backgroundTint="@color/colorGreen"
             android:layout_gravity="center"
-
+            android:onClick="LoginBOpretBruger"
             />
 
         <Button

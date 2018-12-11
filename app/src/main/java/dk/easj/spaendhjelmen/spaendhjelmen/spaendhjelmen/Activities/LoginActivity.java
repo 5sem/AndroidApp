@@ -132,4 +132,9 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
+
+    public void LoginBOpretBruger(View view) {
+        Intent intent = new Intent(this, CreateUserActivity.class);
+        startActivity(intent);
+    }
 }
