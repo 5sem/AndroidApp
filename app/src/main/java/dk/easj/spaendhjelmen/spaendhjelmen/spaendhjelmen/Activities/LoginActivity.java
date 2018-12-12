@@ -1,16 +1,26 @@
 package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
+import android.util.Log;
 import android.util.Patterns;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -133,8 +143,78 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public void LoginBOpretBruger(View view) {
+    public void LoginOpretBruger(View view) {
         Intent intent = new Intent(this, CreateUserActivity.class);
         startActivity(intent);
+    }
+
+    public void LoginForgotPassword(View view) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+        // Set Custom Title
+        TextView title = new TextView(this);
+        // Title Properties
+        title.setText("Email til nyt password");
+        title.setPadding(10, 10, 10, 10);   // Set Position
+        title.setGravity(Gravity.CENTER);
+        title.setTextColor(Color.BLACK);
+        title.setTextSize(20);
+        alertDialog.setCustomTitle(title);
+
+        // Set Message
+        final EditText msg = new EditText(this);
+        // Message Properties
+        msg.setGravity(Gravity.CENTER_HORIZONTAL);
+        msg.setTextColor(Color.BLACK);
+        msg.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        alertDialog.setView(msg);
+
+        // Set Button
+        // you can more buttons
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Perform Action on Button
+
+                FirebaseAuth.getInstance().sendPasswordResetEmail(msg.getText().toString())
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d("LoginActivity", "Email sent.");
+                                    Toast.makeText(LoginActivity.this, "Email sendt", Toast.LENGTH_SHORT).show();
+                                }
+                                else{
+                                    Toast.makeText(LoginActivity.this, "Forkert email", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+            }
+        });
+
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"CANCEL", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Perform Action on Button
+            }
+        });
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Properties for OK Button
+        final Button okBT = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        LinearLayout.LayoutParams neutralBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
+        neutralBtnLP.gravity = Gravity.FILL_HORIZONTAL;
+        okBT.setPadding(50, 10, 10, 10);   // Set Position
+        okBT.setTextColor(getResources().getColor(R.color.colorGreen));
+        okBT.setLayoutParams(neutralBtnLP);
+        okBT.setText("Send email");
+
+        final Button cancelBT = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        LinearLayout.LayoutParams negBtnLP = (LinearLayout.LayoutParams) okBT.getLayoutParams();
+        negBtnLP.gravity = Gravity.FILL_HORIZONTAL;
+        cancelBT.setTextColor(Color.RED);
+        cancelBT.setLayoutParams(negBtnLP);
+        cancelBT.setText("Fortryd");
     }
 }

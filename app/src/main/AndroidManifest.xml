@@ -51,7 +51,11 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".spaendhjelmen.Activities.ProfileActivity"></activity>
+        <activity android:name=".spaendhjelmen.Activities.ProfileActivity"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".spaendhjelmen.Activities.CreateUserActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

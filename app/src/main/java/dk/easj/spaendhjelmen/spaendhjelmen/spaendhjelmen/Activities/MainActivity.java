@@ -23,6 +23,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     private ListView mainListView;
     private boolean sortByLenghtPressed;
 
+    private FirebaseAuth mAuth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         multiSearchEditText.setOnEditorActionListener(searchListener);
         multiSearchEditText.clearFocus();
         mainListView = findViewById(R.id.mainListView);
+        mAuth = FirebaseAuth.getInstance();
     }
 
     private TextView.OnEditorActionListener searchListener = new TextView.OnEditorActionListener() {
@@ -374,6 +379,12 @@ public class MainActivity extends AppCompatActivity {
     public void menu_gpssecureClicked(MenuItem item) {
         Intent intent = new Intent(this, GPSSecureActivity.class);
         startActivity(intent);
+    }
+
+    public void MainSignout(MenuItem item) {
+        mAuth.signOut();
+        finish();
+        Toast.makeText(this, "Logget ud", Toast.LENGTH_SHORT).show();
     }
 
 
