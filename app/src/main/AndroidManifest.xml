@@ -56,9 +56,6 @@
 
         <activity android:name=".spaendhjelmen.Activities.ProfileActivity"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".spaendhjelmen.Activities.CreateUserActivity"
-            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.RequiresPermission;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -24,6 +25,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +42,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.paolorotolo.expandableheightlistview.ExpandableHeightListView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,9 +79,7 @@ import dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Task.GetRatingTask;
 
 public class SpecificTrack extends AppCompatActivity {
     private Track track;
-    private UserComment userComment;
     public ArrayList<Picture> pictureList = new ArrayList<>();
-    public ArrayList<User> userList = new ArrayList<>();
     public ArrayList<Drawable> pictureListdrawable = new ArrayList<>();
     private final ArrayList<UserComment> commentList = new ArrayList<>();
     private TextView
@@ -89,16 +90,19 @@ public class SpecificTrack extends AppCompatActivity {
             specific_track_region,
             specific_track_maxHeight,
             specific_track_difficulty,
-            specific_track_addr;
-    private ImageView imgview;
+            specific_track_addr,
+            specific_track_personalratingtxt;
     private ViewPager viewPager;
     private ProgressBar pgb;
     public RatingBar ratingBar, personalRatingBar;
+    private boolean Loggedin;
+    private FloatingActionButton actionbtn;
+    private int userid;
+    private FirebaseAuth mAuth;
 
+    private final String TAG = "SpecificTrack";
 
-private final String TAG = "SpecificTrack";
-
-@Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_specific_track);
@@ -142,6 +146,20 @@ private final String TAG = "SpecificTrack";
 
         pgb = findViewById(R.id.specific_track_progressbar);
 
+        Loggedin = LoginActivity.getLoggedin();
+
+        if (!Loggedin) {
+            specific_track_personalratingtxt = findViewById(R.id.specific_track_Txt_PersonalRating);
+            specific_track_personalratingtxt.setVisibility(View.GONE);
+
+            actionbtn = findViewById(R.id.specific_track_actionbtn);
+            actionbtn.setVisibility(View.GONE);
+
+            personalRatingBar.setVisibility(View.GONE);
+
+        }
+
+        mAuth = FirebaseAuth.getInstance();
 
     }
 
@@ -161,15 +179,24 @@ private final String TAG = "SpecificTrack";
         GetRatingTask getRatingTask = new GetRatingTask(this);
         getRatingTask.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/Rating/" + track.getId());
 
-        GetRatingPersonalTask getRatingPersonalTask = new GetRatingPersonalTask(this);
-        //TODO replace 1 med ID fra rigtig bruger
-        getRatingPersonalTask.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/rating/personlig/" + "1" + "/" + track.getId());
+        if (Loggedin) {
+            ReadLoggedInUserTask taskLoggedInUserTask = new ReadLoggedInUserTask();
+            taskLoggedInUserTask.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/user/" + mAuth.getCurrentUser().getUid());
+            Log.d("testtest", mAuth.getCurrentUser().getUid());
+
+            GetRatingPersonalTask getRatingPersonalTask = new GetRatingPersonalTask(this);
+            //TODO replace 1 med ID fra rigtig bruger
+            getRatingPersonalTask.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/rating/personlig/" + userid + "/" + track.getId());
+
+
+
+        }
 
 
     }
 
     public void mainFloatBtnClicked(View view) {
-    AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 
         // Set Custom Title
         TextView title = new TextView(this);
@@ -190,32 +217,31 @@ private final String TAG = "SpecificTrack";
 
         // Set Button
         // you can more buttons
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"OK", new DialogInterface.OnClickListener() {
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // Perform Action on Button
 
                 String comment = msg.getText().toString();
-                int userid = 1; //TODO: admin id, ændre til logged in user id
+                //TODO: admin id, ændre til logged in user id
                 int trackid = track.getId();
 
-                try{
+                try {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("UserId",userid);
+                    jsonObject.put("UserId", userid);
                     jsonObject.put("TrackId", trackid);
-                    jsonObject.put("UserComment",comment);
+                    jsonObject.put("UserComment", comment);
                     String jsonDocument = jsonObject.toString();
                     PostCommentTask task = new PostCommentTask();
                     task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments", jsonDocument);
-                }
-                catch (JSONException ex){
-                    Log.d("add",ex.toString());
+                } catch (JSONException ex) {
+                    Log.d("add", ex.toString());
 
                 }
 
             }
         });
 
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"CANCEL", new DialogInterface.OnClickListener() {
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "CANCEL", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // Perform Action on Button
             }
@@ -245,7 +271,7 @@ private final String TAG = "SpecificTrack";
 
     public void openGoogleMaps(View view) {
 
-        Uri gmmIntentUri = Uri.parse("geo:" + track.latitude +"," + track.longitude +"?q=" + Uri.encode( track.address+"," + track.city));
+        Uri gmmIntentUri = Uri.parse("geo:" + track.latitude + "," + track.longitude + "?q=" + Uri.encode(track.address + "," + track.city));
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
         mapIntent.setPackage("com.google.android.apps.maps");
         if (mapIntent.resolveActivity(getPackageManager()) != null) {
@@ -254,28 +280,23 @@ private final String TAG = "SpecificTrack";
     }
 
 
-
     //endregion
 
 
-
-    public void showMenu (View view, final int idtodelete)
-    {
-        PopupMenu menu = new PopupMenu (this, view);
-        menu.setOnMenuItemClickListener (new PopupMenu.OnMenuItemClickListener ()
-        {
+    public void showMenu(View view, final int idtodelete) {
+        final PopupMenu menu = new PopupMenu(this, view);
+        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
             @Override
-            public boolean onMenuItemClick (MenuItem item)
-            {
+            public boolean onMenuItemClick(MenuItem item) {
+                Menu popupMenu = menu.getMenu();
                 int id = item.getItemId();
-                switch (id)
-                {
-                    case R.id.menu_comment_delete: Log.i (TAG, "Slet");
+                switch (id) {
+
+                    case R.id.menu_comment_delete:
+                        Log.i(TAG, "Slet");
                     {
-
                         AlertDialog alertDialog = new AlertDialog.Builder(SpecificTrack.this).create();
-
                         TextView title = new TextView(SpecificTrack.this);
                         title.setText("Slet kommentar?");
                         title.setPadding(10, 10, 10, 10);
@@ -290,11 +311,10 @@ private final String TAG = "SpecificTrack";
 
 
                                 DeleteTask task = new DeleteTask();
-                                task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments/"+ idtodelete);
+                                task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments/" + idtodelete);
                                 finish();
                             }
                         });
-
 
 
                         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Fortryd", new DialogInterface.OnClickListener() {
@@ -325,7 +345,8 @@ private final String TAG = "SpecificTrack";
 
                         break;
                     }
-                    case R.id.menu_comment_edit: Log.i (TAG, "Rediger");
+                    case R.id.menu_comment_edit:
+                        Log.i(TAG, "Rediger");
 
                         AlertDialog alertDialog = new AlertDialog.Builder(SpecificTrack.this).create();
 
@@ -344,8 +365,8 @@ private final String TAG = "SpecificTrack";
                         // Message Properties
 
                         for (UserComment comment : commentList
-                             ) {
-                            if (comment.id == idtodelete){
+                                ) {
+                            if (comment.id == idtodelete) {
                                 msg.setText(comment.usercomment);
 
                             }
@@ -357,35 +378,34 @@ private final String TAG = "SpecificTrack";
 
                         // Set Button
                         // you can more buttons
-                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"OK", new DialogInterface.OnClickListener() {
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 // Perform Action on Button
 
                                 String comment = msg.getText().toString();
-                                int userid = 1; //TODO: admin id, ændre til logged in user id
+                                //TODO: admin id, ændre til logged in user id
                                 int trackid = track.getId();
                                 Calendar calendar = Calendar.getInstance();
                                 String jsonDateString = "/Date(" + calendar.getTimeInMillis() + ")/";
 
-                                try{
+                                try {
                                     JSONObject jsonObject = new JSONObject();
-                                    jsonObject.put("UserId",userid);
+                                    jsonObject.put("UserId", userid);
                                     jsonObject.put("TrackId", trackid);
                                     //jsonObject.put("Edited", jsonDateString);
-                                    jsonObject.put("UserComment",comment);
+                                    jsonObject.put("UserComment", comment);
                                     String jsonDocument = jsonObject.toString();
                                     UpdateCommentTask task = new UpdateCommentTask();
-                                    task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments/"+idtodelete, jsonDocument);
-                                }
-                                catch (JSONException ex){
-                                    Log.d("add",ex.toString());
+                                    task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments/" + idtodelete, jsonDocument);
+                                } catch (JSONException ex) {
+                                    Log.d("add", ex.toString());
 
                                 }
 
                             }
                         });
 
-                        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"CANCEL", new DialogInterface.OnClickListener() {
+                        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "CANCEL", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 // Perform Action on Button
                             }
@@ -409,28 +429,32 @@ private final String TAG = "SpecificTrack";
                         cancelBT.setTextColor(Color.RED);
                         cancelBT.setLayoutParams(negBtnLP);
                         cancelBT.setText("Fortryd");
-                    break;
+                        break;
 
 
-                    case R.id.menu_comment_visprofil: Log.i (TAG, "VisProfil");
+                    case R.id.menu_comment_visprofil:
+                        Log.i(TAG, "VisProfil");
 
                         int userid = 1; //TODO: admin id, ændre til logged in user id
                         ReadUserTask task = new ReadUserTask();
                         task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/users/" + userid);
 
 
-                    break;
+                        break;
 
                 }
                 return true;
             }
         });
-        menu.inflate (R.menu.menu_comment);
+
+
+        menu.inflate(R.menu.menu_comment);
+
         menu.show();
     }
 
 
-private User user;
+    private User user;
 
 
     private class ReadUserTask extends ReadHttpTask {
@@ -447,7 +471,7 @@ private User user;
                 Boolean privacy = obj.getBoolean("Privacy");
 
 
-                user = new User(id, authtoken,username,description,privacy);
+                user = new User(id, authtoken, username, description, privacy);
 
                 Intent intent = new Intent(getBaseContext(), ProfileActivity.class);
                 intent.putExtra("User", user);
@@ -466,25 +490,6 @@ private User user;
             Log.e("PROFILEACTIVITY", message.toString());
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     //region Coonverters
@@ -509,35 +514,34 @@ private User user;
             return "Blå";
         if (color.equals("green"))
             return "Grøn";
-        else{
+        else {
 
         }
         return null;
     }
     //endregion
 
-    public void PostToDb(float rating){
+    public void PostToDb(float rating) {
         int userrating = Math.round(rating);
-        int userid = 1; //TODO: admin id, ændre til logged in user id
+        //TODO: admin id, ændre til logged in user id
         int trackid = track.getId();
 
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("UserId",userid);
+            jsonObject.put("UserId", userid);
             jsonObject.put("TrackId", trackid);
-            jsonObject.put("UserRating",userrating);
+            jsonObject.put("UserRating", userrating);
             String jsonDocument = jsonObject.toString();
             PostuserRatingTask task = new PostuserRatingTask();
             task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/rating", jsonDocument);
 
-        }
-        catch (JSONException ex){
-            Log.d("add",ex.toString());
+        } catch (JSONException ex) {
+            Log.d("add", ex.toString());
 
         }
     }
 
-//region Tasks
+    //region Tasks
     private class DeleteTask extends AsyncTask<String, Void, CharSequence> {
         @Override
         protected CharSequence doInBackground(String... urls) {
@@ -562,6 +566,7 @@ private User user;
         protected void onCancelled(CharSequence charSequence) {
             super.onCancelled(charSequence);
         }
+
         @Override
         protected void onPostExecute(CharSequence charSequence) {
             super.onPostExecute(charSequence);
@@ -706,7 +711,7 @@ private User user;
 
                     Calendar edited = JsonDateToDate(getStringEdited);
 
-                    UserComment userComment = new UserComment(id, trackid, userid,usercomment, created, edited);
+                    UserComment userComment = new UserComment(id, trackid, userid, usercomment, created, edited);
                     commentList.add(userComment);
                 }
                 TextView Kommentar = findViewById(R.id.Specific_track_TxtViewKommentar);
@@ -719,6 +724,7 @@ private User user;
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         int IdToDelete = commentList.get(position).id;
+
                         showMenu(view, IdToDelete);
                     }
                 });
@@ -751,7 +757,7 @@ private User user;
 
                     byte[] image = new byte[jsonarray.length()];
                     for (int counter = 0; counter < jsonarray.length(); counter++) {
-                        image[counter]=(byte)(((int)jsonarray.get(counter)) & 0xFF);
+                        image[counter] = (byte) (((int) jsonarray.get(counter)) & 0xFF);
                     }
                     Base64.encodeToString(image, Base64.DEFAULT);
 
@@ -760,7 +766,7 @@ private User user;
 
                     Picture Pictures = new Picture(id, name, image, trackid);
                     pictureList.add(Pictures);
-                    Drawable imagedrawble = new BitmapDrawable(getResources(),BitmapFactory.decodeByteArray(image, 0, image.length));
+                    Drawable imagedrawble = new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(image, 0, image.length));
                     pictureListdrawable.add(imagedrawble);
                 }
 
@@ -771,7 +777,7 @@ private User user;
                 param.height = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 250, getResources().getDisplayMetrics()));
                 viewPager.setLayoutParams(param);
 
-                ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(SpecificTrack.this,pictureListdrawable);
+                ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(SpecificTrack.this, pictureListdrawable);
                 viewPager.setAdapter(viewPagerAdapter);
 
                 TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
@@ -845,6 +851,27 @@ private User user;
         }
     }
 
+    private class ReadLoggedInUserTask extends ReadHttpTask {
+        @Override
+        protected void onPostExecute(CharSequence jsonString) {
+            try {
+
+                int id = Integer.parseInt(jsonString.toString());
+
+                userid = id;
+
+
+            } catch (Exception ex) {
+                Log.e("PROFILEACTIVITY", ex.getMessage());
+            }
+        }
+
+        @Override
+        protected void onCancelled(CharSequence message) {
+            Toast.makeText(SpecificTrack.this, "Fejl:" + message.toString(), Toast.LENGTH_SHORT).show();
+            Log.e("PROFILEACTIVITY", message.toString());
+        }
+    }
 
     //endregion
 }

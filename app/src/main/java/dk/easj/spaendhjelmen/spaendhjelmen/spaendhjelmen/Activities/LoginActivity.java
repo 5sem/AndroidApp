@@ -42,6 +42,11 @@ public class LoginActivity extends AppCompatActivity {
     private SharedPreferences preferences;
     private EditText usernameField;
     private EditText passwordField;
+    public static boolean Loggedin;
+
+    public static boolean getLoggedin(){ return Loggedin;}
+    public static void setLoggedinfalse(){Loggedin = false;}
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +111,7 @@ public class LoginActivity extends AppCompatActivity {
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
+                    Loggedin = true;
                 }else{
                     Toast.makeText(getApplicationContext(),task.getException().getMessage(), Toast.LENGTH_SHORT).show();
 

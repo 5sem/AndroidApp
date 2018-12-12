@@ -64,7 +64,7 @@ public class CreateUserActivity extends AppCompatActivity {
 
                 FireBaseCreateUser(Email.getText().toString(), Password.getText().toString());
                 //TODO: kald task serivce her
-                if (mAuth.getUid() != null) PostUserToDb(Username.getText().toString(), mAuth.getUid(), "Ikke udfyldt");
+                //if (mAuth.getCurrentUser().getUid() != null)
             }
         });
 
@@ -79,6 +79,7 @@ private void FireBaseCreateUser (String email, String password){
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         setUser(mAuth.getCurrentUser()); //deleteme
+                        PostUserToDb(Username.getText().toString(), mAuth.getCurrentUser().getUid(), "Ikke udfyldt");
                         Log.d("Firebase", "onComplete: UserCreated");
                         Log.d("Firebase", "onComplete: " + mAuth.getUid());
 
@@ -110,8 +111,10 @@ private void PostUserToDb(String username, String authtoken, String dec){
         PostUserTask task = new PostUserTask();
         task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/users", jsonDocument);
 
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+        //TODO: logge direkte ind
+        Toast.makeText(this, "User created", Toast.LENGTH_SHORT).show();
 
     }
     catch (JSONException ex){
