@@ -23,6 +23,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
     public final String FILE_NAME = "Liste.txt";
     private ListView mainListView;
     private boolean sortByLenghtPressed;
+    private boolean Loggedin;
+
+    private FirebaseAuth mAuth;
 
 
     @Override
@@ -66,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
         DeleteBtn = findViewById(R.id.toolbarmain_ImageBtnDelete);
         setSupportActionBar(toolbar);
         setTitle("");
+        Loggedin = LoginActivity.getLoggedin();
+
 
         multiSearchEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -83,6 +90,10 @@ public class MainActivity extends AppCompatActivity {
         multiSearchEditText.setOnEditorActionListener(searchListener);
         multiSearchEditText.clearFocus();
         mainListView = findViewById(R.id.mainListView);
+        mAuth = FirebaseAuth.getInstance();
+
+
+
     }
 
     private TextView.OnEditorActionListener searchListener = new TextView.OnEditorActionListener() {
@@ -118,6 +129,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem profileitem = menu.findItem(R.id.menu_indstillinger);
+        MenuItem gpsitem = menu.findItem(R.id.menu_GPSSecure);
+        MenuItem signoutitem = menu.findItem(R.id.menu_logud);
+        if (!Loggedin){
+            profileitem.setVisible(false);
+            gpsitem.setVisible(false);
+            signoutitem.setVisible(false);
+        }
+        else{
+            profileitem.setVisible(true);
+            gpsitem.setVisible(true);
+            signoutitem.setVisible(true);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -374,6 +398,19 @@ public class MainActivity extends AppCompatActivity {
     public void menu_gpssecureClicked(MenuItem item) {
         Intent intent = new Intent(this, GPSSecureActivity.class);
         startActivity(intent);
+    }
+
+    public void MainSignout(MenuItem item) {
+        mAuth.signOut();
+        finish();
+        Toast.makeText(this, "Logget ud", Toast.LENGTH_SHORT).show();
+        LoginActivity.setLoggedinfalse();
+    }
+
+    public void menu_profileClicked(MenuItem item) {
+        Intent intent = new Intent(this, ProfileActivity.class);
+        startActivity(intent);
+        //TODO: send loggedin user med over
     }
 
 

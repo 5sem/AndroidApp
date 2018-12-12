@@ -82,7 +82,6 @@ android:layout_height="match_parent"
                <TextView
                    android:layout_gravity="center"
                    android:id="@+id/specific_track_Txt_PersonalRating"
-
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:text="din rating:"
@@ -244,6 +243,7 @@ android:layout_height="match_parent"
 </LinearLayout>
 
 <android.support.design.widget.FloatingActionButton
+    android:id="@+id/specific_track_actionbtn"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom|right"

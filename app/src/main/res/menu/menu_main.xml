@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <item
         android:id="@+id/action_nothing_really"
@@ -31,8 +32,9 @@
         android:id="@+id/menu_indstillinger"
         android:icon="@mipmap/ic_launcher_round"
         android:orderInCategory="4"
-        android:title="Indstillinger"
-        app:showAsAction="never" />
+        android:title="Profil"
+        app:showAsAction="never"
+        android:onClick="menu_profileClicked"/>
 
     <item
         android:id="@+id/menu_GPSSecure"
@@ -54,6 +56,7 @@
         android:icon="@drawable/ic_exit_to_app_black_24dp"
         android:orderInCategory="7"
         android:title="Logud"
+        android:onClick="MainSignout"
         app:showAsAction="withText"
         />
 
