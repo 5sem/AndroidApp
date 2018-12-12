@@ -36,8 +36,22 @@
         android:textStyle="bold"
         android:textSize="20dp"/>
 
+<TextView
+    android:layout_marginLeft="7dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Brugernavn:"/>
+    <EditText
+        android:layout_marginLeft="7dp"
+        android:id="@+id/profilEditTextUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-
+    <TextView
+        android:layout_marginLeft="7dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Beskrivelse"/>
         <EditText
             android:layout_margin="7dp"
             android:layout_height="165dp"
