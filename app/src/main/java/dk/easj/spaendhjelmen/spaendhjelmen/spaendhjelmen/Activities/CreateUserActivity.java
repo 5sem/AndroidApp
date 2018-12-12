@@ -1,5 +1,7 @@
 package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +18,18 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.JsonObject;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
 
@@ -50,6 +64,7 @@ public class CreateUserActivity extends AppCompatActivity {
 
                 FireBaseCreateUser(Email.getText().toString(), Password.getText().toString());
                 //TODO: kald task serivce her
+                if (mAuth.getUid() != null) PostUserToDb(Username.getText().toString(), mAuth.getUid(), "Ikke udfyldt");
             }
         });
 
@@ -69,7 +84,7 @@ private void FireBaseCreateUser (String email, String password){
 
                     } else {
                         // If sign in fails, display a message to the user.
-                        Toast.makeText(CreateUserActivity.this, "Fejl under oprettelse tjek internet forbindelsen og prøv iogen", Toast.LENGTH_LONG).show();
+                        Toast.makeText(CreateUserActivity.this, "Fejl under oprettelse tjek internet forbindelsen og prøv igen", Toast.LENGTH_LONG).show();
                     }
                 }
             });
@@ -77,7 +92,94 @@ private void FireBaseCreateUser (String email, String password){
 
 
 
+
+
     private void setUser(FirebaseUser user) {
         this.user = user;
     }
+
+
+private void PostUserToDb(String username, String authtoken, String dec){
+
+    JSONObject jsonObject = new JSONObject();
+    try {
+        jsonObject.put("AuthToken",authtoken);
+        jsonObject.put("UserName", username);
+        jsonObject.put("Description",dec);
+        String jsonDocument = jsonObject.toString();
+        PostUserTask task = new PostUserTask();
+        task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/users", jsonDocument);
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+
+    }
+    catch (JSONException ex){
+        Log.d("add",ex.toString());
+
+    }
+
+
+}
+
+
+    private class PostUserTask extends AsyncTask<String, Void, CharSequence> {
+
+        @Override
+        protected CharSequence doInBackground(String... params) {
+            String urlString = params[0];
+            String jsonDocument = params[1];
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setRequestProperty("Accept", "application/json");
+                OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream());
+                osw.write(jsonDocument);
+                osw.flush();
+                osw.close();
+                int responseCode = connection.getResponseCode();
+                if (responseCode / 100 != 2) {
+                    String responseMessage = connection.getResponseMessage();
+                    throw new IOException("HTTP response code: " + responseCode + " " + responseMessage);
+                }
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(connection.getInputStream()));
+                String line = reader.readLine();
+                return line;
+            } catch (MalformedURLException ex) {
+                cancel(true);
+                String message = ex.getMessage() + " " + urlString;
+                Log.e("POSTEXECUTE", message);
+                return message;
+            } catch (IOException ex) {
+                cancel(true);
+                Log.e("POSTEXECUTE", ex.getMessage());
+                return ex.getMessage();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(CharSequence charSequence) {
+            super.onPostExecute(charSequence);
+            Log.d("POSTEXECUTE", charSequence.toString());
+            finish();
+        }
+
+        @Override
+        protected void onCancelled(CharSequence charSequence) {
+            super.onCancelled(charSequence);
+            Toast.makeText(CreateUserActivity.this, "Fejl: " + charSequence.toString(), Toast.LENGTH_LONG).show();
+            Log.d("POSTEXECUTE", charSequence.toString());
+            finish();
+        }
+    }
+
+
+
+
+
+
 }
