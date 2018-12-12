@@ -34,6 +34,9 @@
             android:name=".spaendhjelmen.Activities.SpecificTrack"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".spaendhjelmen.Activities.CreateUserActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".spaendhjelmen.Activities.AboutActivity"
             android:screenOrientation="portrait" />
         <activity

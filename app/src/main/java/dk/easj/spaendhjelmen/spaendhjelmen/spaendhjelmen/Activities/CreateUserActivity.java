@@ -1,5 +1,6 @@
 package dk.easj.spaendhjelmen.spaendhjelmen.spaendhjelmen.Activities;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,6 +64,7 @@ public class CreateUserActivity extends AppCompatActivity {
 
                 FireBaseCreateUser(Email.getText().toString(), Password.getText().toString());
                 //TODO: kald task serivce her
+                if (mAuth.getUid() != null) PostUserToDb(Username.getText().toString(), mAuth.getUid(), "Ikke udfyldt");
             }
         });
 
@@ -79,31 +82,15 @@ private void FireBaseCreateUser (String email, String password){
                         Log.d("Firebase", "onComplete: UserCreated");
                         Log.d("Firebase", "onComplete: " + mAuth.getUid());
 
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("AuthToken", mAuth.getUid());
-                            jsonObject.put("UserName", Username.getText());
-                            jsonObject.put("Description","Profiltekst");
-                            String jsonDocument = jsonObject.toString();
-                            PostUserTask postUserTask = new PostUserTask();
-                            postUserTask.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/users", jsonDocument);
-
-                        }
-                        catch (JSONException ex){
-                            Log.d("add",ex.toString());
-
-                        }
-
-
-
-
                     } else {
                         // If sign in fails, display a message to the user.
-                        Toast.makeText(CreateUserActivity.this, "Fejl under oprettelse tjek internet forbindelsen og prøv iogen", Toast.LENGTH_LONG).show();
+                        Toast.makeText(CreateUserActivity.this, "Fejl under oprettelse tjek internet forbindelsen og prøv igen", Toast.LENGTH_LONG).show();
                     }
                 }
             });
 }
+
+
 
 
 
@@ -112,7 +99,28 @@ private void FireBaseCreateUser (String email, String password){
     }
 
 
+private void PostUserToDb(String username, String authtoken, String dec){
 
+    JSONObject jsonObject = new JSONObject();
+    try {
+        jsonObject.put("AuthToken",authtoken);
+        jsonObject.put("UserName", username);
+        jsonObject.put("Description",dec);
+        String jsonDocument = jsonObject.toString();
+        PostUserTask task = new PostUserTask();
+        task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/users", jsonDocument);
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+
+    }
+    catch (JSONException ex){
+        Log.d("add",ex.toString());
+
+    }
+
+
+}
 
 
     private class PostUserTask extends AsyncTask<String, Void, CharSequence> {
