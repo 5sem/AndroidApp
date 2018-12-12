@@ -37,7 +37,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     //public static final ArrayList<User> userList = new ArrayList<>();
     private User user;
-    private EditText profile_profiletext_edittext;
+    private EditText profile_profiletext_edittext, profilusername;
     private Switch profilePrivacySwitch;
 
     @Override
@@ -58,6 +58,8 @@ public class ProfileActivity extends AppCompatActivity {
         profilePrivacySwitch = findViewById(R.id.profilePrivacySwitch);
         profilePrivacySwitch.setChecked(user.Privacy);
 
+        profilusername = findViewById(R.id.profilEditTextUsername);
+        profilusername.setText(user.Username);
     }
 
     @Override
@@ -68,10 +70,11 @@ public class ProfileActivity extends AppCompatActivity {
     public void profileBtnSave(View view) {
         String newDescription;
         Boolean isPrivate;
+        String username;
 
         profile_profiletext_edittext = findViewById(R.id.profile_profiletext_edittext);
         newDescription = profile_profiletext_edittext.getText().toString();
-
+        username = profilusername.getText().toString();
 
         profilePrivacySwitch = findViewById(R.id.profilePrivacySwitch);
 
@@ -88,6 +91,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             jsonObject.put("Description", newDescription);
             jsonObject.put("Privacy", isPrivate);
+            jsonObject.put("UserName", username);
 
             UpdateProfileTask task = new UpdateProfileTask();
             task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/users/"+user.getId(), jsonObject.toString());
