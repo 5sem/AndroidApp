@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -38,7 +39,9 @@ public class ProfileActivity extends AppCompatActivity {
     //public static final ArrayList<User> userList = new ArrayList<>();
     private User user;
     private EditText profile_profiletext_edittext, profilusername;
+    private TextView TextViewDesc, TextViewUsername;
     private Switch profilePrivacySwitch;
+    private Button opret;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +63,27 @@ public class ProfileActivity extends AppCompatActivity {
 
         profilusername = findViewById(R.id.profilEditTextUsername);
         profilusername.setText(user.Username);
+        
+        opret = findViewById(R.id.ProfileBtnOpret);
+        TextViewDesc = findViewById(R.id.profile_profiletext_Textview);
+        TextViewDesc.setText(user.Description);
+        TextViewUsername = findViewById(R.id.profilTextViewUsername);
+        TextViewUsername.setText(user.Username);
+
+        //ikke logged ind
+        if (!LoginActivity.getLoggedin()){
+            profile_profiletext_edittext.setVisibility(View.GONE);
+            profilusername.setVisibility(View.GONE);
+
+            profilePrivacySwitch.setVisibility(View.GONE);
+            opret.setVisibility(View.GONE);
+        }
+        else {
+            //hvis logged ind
+            TextViewDesc.setVisibility(View.GONE);
+            TextViewUsername.setVisibility(View.GONE);
+        }
+
     }
 
     @Override

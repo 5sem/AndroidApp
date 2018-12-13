@@ -39,11 +39,12 @@
         android:textStyle="bold"
         android:textSize="20dp"/>
 
-<TextView
-    android:layout_marginLeft="7dp"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Brugernavn:"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="7dp"
+        android:text="Brugernavn:"
+        android:textStyle="bold" />
     <EditText
         android:layout_marginLeft="7dp"
         android:id="@+id/profilEditTextUsername"
@@ -51,11 +52,20 @@
         android:layout_height="wrap_content" />
 
     <TextView
+
         android:layout_marginLeft="7dp"
+        android:id="@+id/profilTextViewUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Beskrivelse"/>
-        <EditText
+        android:layout_marginLeft="7dp"
+        android:text="Beskrivelse"
+        android:textStyle="bold" />
+
+    <EditText
             android:layout_margin="7dp"
             android:layout_height="165dp"
             android:layout_width="match_parent"
@@ -64,6 +74,17 @@
             android:id="@+id/profile_profiletext_edittext"
             android:maxLength="200"
             />
+
+    <TextView
+
+        android:layout_margin="7dp"
+        android:layout_height="165dp"
+        android:layout_width="match_parent"
+        android:textSize="15dp"
+        android:gravity="start"
+        android:id="@+id/profile_profiletext_Textview"
+        android:maxLength="200"
+        />
 
 
 <Switch
@@ -74,6 +95,7 @@
     android:id="@+id/profilePrivacySwitch"/>
 
     <Button
+        android:id="@+id/ProfileBtnOpret"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:text="GEM"
