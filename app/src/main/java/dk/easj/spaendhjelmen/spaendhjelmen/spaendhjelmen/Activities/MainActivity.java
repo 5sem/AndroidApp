@@ -192,9 +192,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         mainListView.setAdapter(new TrackAdapter(MainActivity.this, searchTrackList));
+        mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Intent intent = new Intent(getBaseContext(), SpecificTrack.class);
+                Track track = searchTrackList.get(position);
+                intent.putExtra("Track", track);
+
+                startActivity(intent);
+            }
+        });
+
         pgb.setVisibility(View.GONE);
         InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
+        //TODO: onclick listener
     }
 
     public void MainPageMultiSearchClearClicked(View view) {
