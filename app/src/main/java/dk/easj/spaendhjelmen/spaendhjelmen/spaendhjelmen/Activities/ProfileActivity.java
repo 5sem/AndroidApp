@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -37,8 +38,10 @@ public class ProfileActivity extends AppCompatActivity {
 
     //public static final ArrayList<User> userList = new ArrayList<>();
     private User user;
-    private EditText profile_profiletext_edittext;
+    private EditText profile_profiletext_edittext, profilusername;
+    private TextView TextViewDesc, TextViewUsername;
     private Switch profilePrivacySwitch;
+    private Button opret;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +61,29 @@ public class ProfileActivity extends AppCompatActivity {
         profilePrivacySwitch = findViewById(R.id.profilePrivacySwitch);
         profilePrivacySwitch.setChecked(user.Privacy);
 
+        profilusername = findViewById(R.id.profilEditTextUsername);
+        profilusername.setText(user.Username);
+        
+        opret = findViewById(R.id.ProfileBtnOpret);
+        TextViewDesc = findViewById(R.id.profile_profiletext_Textview);
+        TextViewDesc.setText(user.Description);
+        TextViewUsername = findViewById(R.id.profilTextViewUsername);
+        TextViewUsername.setText(user.Username);
+
+        //ikke logged ind
+        if (!LoginActivity.getLoggedin()){
+            profile_profiletext_edittext.setVisibility(View.GONE);
+            profilusername.setVisibility(View.GONE);
+
+            profilePrivacySwitch.setVisibility(View.GONE);
+            opret.setVisibility(View.GONE);
+        }
+        else {
+            //hvis logged ind
+            TextViewDesc.setVisibility(View.GONE);
+            TextViewUsername.setVisibility(View.GONE);
+        }
+
     }
 
     @Override
@@ -68,10 +94,11 @@ public class ProfileActivity extends AppCompatActivity {
     public void profileBtnSave(View view) {
         String newDescription;
         Boolean isPrivate;
+        String username;
 
         profile_profiletext_edittext = findViewById(R.id.profile_profiletext_edittext);
         newDescription = profile_profiletext_edittext.getText().toString();
-
+        username = profilusername.getText().toString();
 
         profilePrivacySwitch = findViewById(R.id.profilePrivacySwitch);
 
@@ -88,6 +115,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             jsonObject.put("Description", newDescription);
             jsonObject.put("Privacy", isPrivate);
+            jsonObject.put("UserName", username);
 
             UpdateProfileTask task = new UpdateProfileTask();
             task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/users/"+user.getId(), jsonObject.toString());

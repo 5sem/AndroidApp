@@ -450,6 +450,12 @@ public class SpecificTrack extends AppCompatActivity {
 
         menu.inflate(R.menu.menu_comment);
 
+        if (!LoginActivity.getLoggedin()) {
+        menu.getMenu().getItem(0).setVisible(false);
+        menu.getMenu().getItem(1).setVisible(false);
+        }
+
+
         menu.show();
     }
 
