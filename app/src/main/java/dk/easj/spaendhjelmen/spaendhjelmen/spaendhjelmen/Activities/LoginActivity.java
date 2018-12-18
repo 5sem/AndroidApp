@@ -162,7 +162,7 @@ public class LoginActivity extends AppCompatActivity {
         // Title Properties
         title.setText("Email til nyt password");
         title.setPadding(10, 10, 10, 10);   // Set Position
-        title.setGravity(Gravity.CENTER);
+        title.setGravity(Gravity.LEFT);
         title.setTextColor(Color.BLACK);
         title.setTextSize(20);
         alertDialog.setCustomTitle(title);
@@ -170,7 +170,7 @@ public class LoginActivity extends AppCompatActivity {
         // Set Message
         final EditText msg = new EditText(this);
         // Message Properties
-        msg.setGravity(Gravity.CENTER_HORIZONTAL);
+        msg.setGravity(Gravity.LEFT);
         msg.setTextColor(Color.BLACK);
         msg.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         alertDialog.setView(msg);

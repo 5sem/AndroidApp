@@ -18,7 +18,10 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="foregroundImage" value="C:\Users\Magnus\Desktop\profilepic.png" />
+                                      <entry key="backgroundLayerName" value="shlogo1background" />
+                                      <entry key="foregroundImage" value="C:\Users\Mag\Desktop\logo213.jpg" />
+                                      <entry key="foregroundLayerName" value="shlogo1forground" />
+                                      <entry key="outputName" value="ic_launcher2123" />
                                     </map>
                                   </option>
                                 </PersistentState>

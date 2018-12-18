@@ -9,4 +9,7 @@
 
     <color name="duskYellow">#f5d8ac</color>
     <color name="lightGrey">#ecb562</color>
+    <color name="acidGreen">#26ae90</color>
+    <color name="black">#000000</color>
+
 </resources>

@@ -1,123 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/acidGreen">
+
+    <ImageView
+        android:layout_marginTop="20dp"
+        android:id="@+id/login_imageView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/black"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Log ind"/>
+
+    <EditText
+        android:id="@+id/login_username_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/white"
+        android:hint="Email"
+        android:height="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:inputType="textEmailAddress"
 
 
-        <TextView android:text = "Login til spændhjelmen"
-            android:layout_width="match_parent"
-            android:layout_height = "wrap_content"
-            android:textSize = "35dp"
-            android:layout_alignParentTop = "true"
-            android:layout_centerHorizontal = "true"/>
+        />
 
-        <ImageView
-            android:id="@+id/login_imageView"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            app:srcCompat="@mipmap/ic_launcher_logo" />
+    <EditText
+        android:id="@+id/login_password_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/white"
+        android:hint="Password"
+        android:height="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:inputType="textPassword"
+        />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"
+            android:id="@+id/login_button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:orientation="vertical">
+            android:layout_alignParentRight="true"
+            android:backgroundTint="@color/white"
+            android:onClick="LoginOnClick"
+            android:text="log ind" />
 
-            <EditText
-                android:id="@+id/login_username_edittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Email"
-                android:inputType="textEmailAddress" />
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:id="@+id/login_glemtkodeord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="false"
+            android:backgroundTint="@color/white"
+            android:onClick="LoginForgotPassword"
+            android:text="Glemt dit kodeord?"
+            android:textColor="@color/black"
+            android:clickable="true"/>
+    </RelativeLayout>
 
-            <EditText
-                android:id="@+id/login_password_edittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Password"
-                android:inputType="textPassword" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <CheckBox
-                    android:id="@+id/login_remember_checkbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:backgroundTint="@color/colorGreen"
-                    android:hint="Husk login" />
-
-                <Button
-                    android:id="@+id/login_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:backgroundTint="@color/colorGreen"
-                    android:onClick="LoginOnClick"
-                    android:text="login" />
-
-                <ProgressBar
-                    android:id="@+id/login_progressbar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:visibility="gone"/>
-
-            </RelativeLayout>
-
-
-        </LinearLayout>
-
+    <ProgressBar
+        android:id="@+id/login_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"/>
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="bottom">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="45dp"
+            android:id="@+id/login_udenlogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:backgroundTint="@color/white"
+            android:onClick="MainPage"
+            android:text="Fortsæt uden log ind" />
 
         <Button
             android:id="@+id/login_opret"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Opret ny bruger"
-            android:backgroundTint="@color/colorGreen"
-            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/white"
             android:onClick="LoginOpretBruger"
-            />
+            android:text="Opret bruger"
+            android:layout_marginRight="10dp"/>
 
-        <Button
-            android:id="@+id/login_glemtkodeord"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Glemt kodeord"
-            android:backgroundTint="@color/colorGreen"
-            android:layout_gravity="center"
-            android:onClick="LoginForgotPassword"
-
-            />
-        <Button
-            android:id="@+id/login_udenlogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Fortsæt uden login"
-            android:onClick="MainPage"
-            android:backgroundTint="@color/colorGreen"
-            />
     </LinearLayout>
 
 
-
-
-
-
 </LinearLayout>
-
