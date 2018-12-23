@@ -5,8 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/gpssecure"
-
     >
 
     <include
@@ -23,6 +21,7 @@
         android:text="Tænd"
         android:layout_gravity="center"
         style="@style/Widget.AppCompat.Button.Colored"
+        android:textSize="40dp"
         />
 
     <Button
@@ -34,7 +33,9 @@
         android:layout_height="wrap_content"
         android:text="Sluk"
         android:layout_gravity="center"
+        android:background="@android:color/holo_red_dark"
         style="@style/Widget.AppCompat.Button.Colored"
+        android:textSize="40dp"
         />
 
     <Button
@@ -48,5 +49,14 @@
         style="@style/Widget.AppCompat.Button.Colored"
         />
 
+
+    <ImageView
+
+        android:layout_marginTop="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/gpssecurelogonew"
+
+        />
 
 </LinearLayout>

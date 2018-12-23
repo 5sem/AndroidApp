@@ -19,9 +19,36 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundLayerName" value="shlogo1background" />
-                                      <entry key="foregroundImage" value="C:\Users\Mag\Desktop\logo213.jpg" />
-                                      <entry key="foregroundLayerName" value="shlogo1forground" />
-                                      <entry key="outputName" value="ic_launcher2123" />
+                                      <entry key="foregroundImage" value="C:\Users\Mag\Desktop\menulogo2.jpg" />
+                                      <entry key="foregroundLayerName" value="foreground123456" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
+                            <entry key="launcherLegacy">
+                              <value>
+                                <PersistentState>
+                                  <option name="children">
+                                    <map>
+                                      <entry key="image">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="paddingPercent" value="-5" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                    </map>
+                                  </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="cropped" value="true" />
+                                      <entry key="imageAsset" value="C:\Users\Mag\Desktop\menulogo2.jpg" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -35,6 +62,11 @@
                 </map>
               </option>
             </PersistentState>
+          </value>
+        </entry>
+        <entry key="vectorWizard">
+          <value>
+            <PersistentState />
           </value>
         </entry>
       </map>

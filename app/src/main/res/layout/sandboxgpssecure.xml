@@ -7,11 +7,10 @@
     android:orientation="vertical"
     >
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/gpssecurelogo"/>
-
+    <include
+        android:id="@+id/toolbartrack"
+        layout="@layout/toolbar_track"
+        />
 
     <Button
         android:onClick="gpsSecureTændClicked"
@@ -34,6 +33,7 @@
         android:layout_height="wrap_content"
         android:text="Sluk"
         android:layout_gravity="center"
+        android:background="@android:color/holo_red_dark"
         style="@style/Widget.AppCompat.Button.Colored"
         android:textSize="40dp"
         />
@@ -47,6 +47,16 @@
         android:text="Indstillinger"
         android:layout_gravity="center"
         style="@style/Widget.AppCompat.Button.Colored"
+        />
+
+
+    <ImageView
+
+        android:layout_marginTop="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/gpssecurelogonew"
+
         />
 
 </LinearLayout>

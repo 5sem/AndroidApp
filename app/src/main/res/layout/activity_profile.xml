@@ -30,14 +30,8 @@
                 android:layout_margin="7dp"
                 android:layout_width="wrap_content"
                 android:layout_height="200dp"
-                android:src="@drawable/profilepicture" />
+                android:src="@drawable/menulogo1" />
         </LinearLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Profiltekst"
-        android:textStyle="bold"
-        android:textSize="20dp"/>
 
     <TextView
         android:layout_width="wrap_content"
