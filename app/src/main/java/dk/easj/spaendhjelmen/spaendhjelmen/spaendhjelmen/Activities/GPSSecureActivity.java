@@ -42,6 +42,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,7 +53,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Timer;
 
 import dk.easj.spaendhjelmen.spaendhjelmen.R;
@@ -75,7 +80,10 @@ public class GPSSecureActivity extends AppCompatActivity {
     private Button tænd, sluk;
     private GPSSecureSettings settings;
     private float radius;
-
+    private double latitude;
+    private double longitude;
+    String stringlongitude;
+    String stringlatitude;
     public static GoogleApiClient googleApiClient = null;
 
     @Override
@@ -194,8 +202,8 @@ public class GPSSecureActivity extends AppCompatActivity {
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 googleApiClient);
         if (mLastLocation != null) {
-            double latitude = mLastLocation.getLatitude();
-            double longitude = mLastLocation.getLongitude();
+            latitude = mLastLocation.getLatitude();
+            longitude = mLastLocation.getLongitude();
 
 //TODO: float kan være null pga man kan gemme null
           radius = Float.parseFloat(settings.getDistance()); //settings return null
@@ -375,20 +383,26 @@ public class GPSSecureActivity extends AppCompatActivity {
 
     //TODO:hent nummer og besked fra gemt fil
     private void SendAlertSMS() {
+
         if (CheckPermissions(Manifest.permission.SEND_SMS)) {
             SmsManager smsManager = SmsManager.getDefault();
             //TODO: ændre message i settings, husk at send cords med
             //TODO: contactnumber kan være null!
+            stringlongitude = Double.toString(longitude).replaceAll(",", ".");
+            stringlatitude = Double.toString(latitude).replaceAll(",", ".");
+
+            String message = settings.getContactMessaage()+ " Følg linket for position: " + java.text.MessageFormat.format("http://maps.google.com/maps?q={0},{1}&ll={0},{1}&z=17", latitude, latitude) +" Hilsen: Spænd hjælmen";
             if (settings.getContactNumber1().length() == 8)
-            smsManager.sendTextMessage(settings.getContactNumber1(), null, settings.getContactMessaage(), null, null);
+            smsManager.sendTextMessage(settings.getContactNumber1(), null, message, null, null);
 
             if (settings.getContactNumber2().length() == 8)
-                smsManager.sendTextMessage(settings.getContactNumber2(), null, settings.getContactMessaage(), null, null);
+                smsManager.sendTextMessage(settings.getContactNumber2(), null, message, null, null);
 
             if (settings.getContactNumber3().length() == 8)
-                smsManager.sendTextMessage(settings.getContactNumber3(), null, settings.getContactMessaage(), null, null);
+                smsManager.sendTextMessage(settings.getContactNumber3(), null, message, null, null);
         } else {
             ActivityCompat.requestPermissions(GPSSecureActivity.this, new String[]{Manifest.permission.SEND_SMS}, sendSmsPermissionsRequestCode);
+
         }
     }
 
