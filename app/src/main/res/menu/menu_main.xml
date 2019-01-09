@@ -28,13 +28,13 @@
         app:showAsAction="never"
         android:onClick="menuMainSortByLengthClicked"/>
 
-    <item
-        android:id="@+id/menu_indstillinger"
-        android:icon="@mipmap/ic_launcher_round"
-        android:orderInCategory="4"
-        android:title="Profil"
-        app:showAsAction="never"
-        android:onClick="menu_profileClicked"/>
+    <!--<item-->
+        <!--android:id="@+id/menu_indstillinger"-->
+        <!--android:icon="@mipmap/ic_launcher_round"-->
+        <!--android:orderInCategory="4"-->
+        <!--android:title="Profil"-->
+        <!--app:showAsAction="never"-->
+        <!--android:onClick="menu_profileClicked"/>-->
 
     <item
         android:id="@+id/menu_GPSSecure"

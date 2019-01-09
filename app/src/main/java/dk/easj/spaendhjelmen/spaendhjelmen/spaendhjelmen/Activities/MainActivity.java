@@ -129,16 +129,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        MenuItem profileitem = menu.findItem(R.id.menu_indstillinger);
+       // MenuItem profileitem = menu.findItem(R.id.menu_indstillinger);
         MenuItem gpsitem = menu.findItem(R.id.menu_GPSSecure);
         MenuItem signoutitem = menu.findItem(R.id.menu_logud);
         if (!Loggedin){
-            profileitem.setVisible(false);
+           // profileitem.setVisible(false);
             gpsitem.setVisible(false);
             signoutitem.setVisible(false);
         }
         else{
-            profileitem.setVisible(true);
+           // profileitem.setVisible(true);
             gpsitem.setVisible(true);
             signoutitem.setVisible(true);
         }
