@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="italic"
-        android:text="Du skal du vurdere hvor mange minutter det det tager dig, at køre x antal meter. Dette bruges til at bestemme hvornår der dine kontaktpersoner skal kontaktes."/>
+        android:text="Du skal du vurdere hvor mange minutter det tager dig, at køre x antal meter. Dette bruges til at bestemme hvornår der dine kontaktpersoner skal kontaktes."/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -79,7 +79,7 @@
         android:id="@+id/gpssecuresettings_TelefonNummer3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Kontaknummer 3"
+        android:hint="Kontaktnummer 3"
         android:inputType="phone" />
 
     <Button

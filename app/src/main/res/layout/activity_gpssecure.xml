@@ -47,6 +47,8 @@
         android:text="Indstillinger"
         android:layout_gravity="center"
         style="@style/Widget.AppCompat.Button.Colored"
+
+
         />
 
 

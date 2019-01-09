@@ -46,7 +46,7 @@ public class CommentAdapter extends BaseAdapter {
             LayoutInflater inflater = LayoutInflater.from(context);
             convertView = inflater.inflate(R.layout.comment_list_item, null);
         }
-        UserComment comment =commentList.get(position);
+        UserComment comment = commentList.get(position);
 
         TextView editTitle = convertView.findViewById(R.id.comment_txtViewEditTitle);
         ImageView imageView =(ImageView) convertView.findViewById(R.id.comment_ImageProflePic);
