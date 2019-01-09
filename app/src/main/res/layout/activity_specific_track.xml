@@ -35,8 +35,9 @@ android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rute Rating:"
-                    android:textSize="20dp" />
+                    android:text="Bedømmelse"
+                    android:textStyle="bold"
+                    android:textSize="18dp" />
 
                 <RatingBar
                     android:isIndicator="true"
@@ -84,8 +85,9 @@ android:layout_height="match_parent"
                    android:id="@+id/specific_track_Txt_PersonalRating"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
-                   android:text="din rating:"
-                   android:textSize="20dp" />
+                   android:text="Din bedømmelse"
+                   android:textStyle="bold"
+                   android:textSize="15dp" />
                <RatingBar
                    android:id="@+id/Specific_rute_Personalrating"
                    android:stepSize="1"
