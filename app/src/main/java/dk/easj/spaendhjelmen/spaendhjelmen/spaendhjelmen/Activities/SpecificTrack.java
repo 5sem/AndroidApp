@@ -435,10 +435,12 @@ public class SpecificTrack extends AppCompatActivity {
                     case R.id.menu_comment_visprofil:
                         Log.i(TAG, "VisProfil");
 
-                        int userid = 1; //TODO: admin id, ændre til logged in user id
-                        ReadUserTask task = new ReadUserTask();
-                        task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/users/" + userid);
-
+                        for(UserComment comment : commentList){
+                            if (comment.id == idtodelete){
+                                ReadUserTask task = new ReadUserTask();
+                                task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/users/" + comment.userId);
+                            }
+                        }
 
                         break;
 
