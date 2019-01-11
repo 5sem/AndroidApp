@@ -313,6 +313,10 @@ public class GPSSecureActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(GPSSecureActivity.this, new String[]{Manifest.permission.SEND_SMS}, sendSmsPermissionsRequestCode);
         }
 
+        if(!CheckPermissions(Manifest.permission.ACCESS_FINE_LOCATION)){
+            ActivityCompat.requestPermissions(GPSSecureActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1 );
+        }
+
         if (getLocationMode(this) != 3) {
             AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 

@@ -399,9 +399,7 @@ public class SpecificTrack extends AppCompatActivity {
                                     task.execute("https://spaendhjelmenrest.azurewebsites.net/Service1.svc/comments/" + idtodelete, jsonDocument);
                                 } catch (JSONException ex) {
                                     Log.d("add", ex.toString());
-
                                 }
-
                             }
                         });
 
